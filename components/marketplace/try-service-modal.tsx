@@ -57,27 +57,24 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
   React.useEffect(() => {
     async function fetchSolPrice() {
       try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+        const res = await fetch('/api/solana/price', {
           cache: 'no-store'
         })
         if (!res.ok) throw new Error('Failed to fetch SOL price')
         const data = await res.json()
-        if (!data.solana?.usd) throw new Error('Invalid price data')
-        setSolPrice(data.solana.usd)
-        console.log('✅ Live SOL Price Updated:', data.solana.usd)
+        if (!data.price) throw new Error('Invalid price data')
+        setSolPrice(data.price)
+        console.log('✅ Live SOL Price Updated: $' + data.price.toFixed(2))
       } catch (err) {
         console.error('❌ Failed to fetch live SOL price:', err)
-        toast({
-          title: "Price Error",
-          description: "Unable to fetch live SOL price. Please try again.",
-          variant: "destructive"
-        })
+        // Silently fail - don't show toast on every refresh failure
+        // User can still use USDC payment
       }
     }
     fetchSolPrice()
     const interval = setInterval(fetchSolPrice, 30000) // Refresh every 30s
     return () => clearInterval(interval)
-  }, [toast])
+  }, [])
 
   const buildUrl = React.useCallback(() => {
     const url = service.endpoint
