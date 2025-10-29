@@ -5,6 +5,18 @@ import type { Quote, X402Response } from "./types"
 // USDC decimals on Solana
 const USDC_DECIMALS = 6
 
+async function fetchSolUsdPrice(): Promise<number> {
+  const res = await fetch(
+    "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",
+    { next: { revalidate: 15 } }
+  )
+  if (!res.ok) throw new Error("Failed to fetch SOL price")
+  const data = await res.json()
+  const price = data?.solana?.usd
+  if (!price) throw new Error("Invalid SOL price data")
+  return Number(price)
+}
+
 /**
  * Generate a payment quote for an API request
  */
@@ -128,32 +140,76 @@ export async function verifyTransaction(
       }
     }
     
-    if (!transferFound) {
-      console.error("[x402] No USDC transfer found to recipient")
-      return false
+    if (transferFound) {
+      // Verify amount (allow 1% tolerance for rounding)
+      const tolerance = Math.max(1, Math.floor(expectedLamports * 0.01))
+      const amountDiff = Math.abs(transferAmount - expectedLamports)
+      
+      if (amountDiff > tolerance) {
+        console.error("[x402] USDC amount mismatch:", {
+          expected: expectedLamports,
+          actual: transferAmount,
+          diff: amountDiff,
+          tolerance,
+        })
+      } else {
+        console.log("[x402] USDC transaction verified successfully:", {
+          signature: transactionSignature,
+          amount: transferAmount,
+          expectedAmount: expectedLamports,
+        })
+        return true
+      }
     }
-    
-    // Verify amount (allow 1% tolerance for rounding)
-    const tolerance = Math.max(1, Math.floor(expectedLamports * 0.01))
-    const amountDiff = Math.abs(transferAmount - expectedLamports)
-    
-    if (amountDiff > tolerance) {
-      console.error("[x402] Transfer amount mismatch:", {
-        expected: expectedLamports,
-        actual: transferAmount,
-        diff: amountDiff,
-        tolerance,
+
+    // Fallback: verify native SOL transfer to recipient
+    try {
+      const accountKeys: string[] = ((transaction.transaction as any)?.message?.accountKeys || [])
+        .map((k: any) => (typeof k === "string" ? k : k?.toBase58?.() || k?.pubkey?.toBase58?.() || String(k)))
+
+      const recipientIndex = accountKeys.findIndex((k) => k === recipientPubkey.toBase58())
+      if (recipientIndex === -1) {
+        console.error("[x402] Recipient account not found in transaction account keys (SOL path)")
+        return false
+      }
+
+      const preLamports = transaction.meta?.preBalances?.[recipientIndex] ?? 0
+      const postLamports = transaction.meta?.postBalances?.[recipientIndex] ?? 0
+      const lamportsReceived = postLamports - preLamports
+
+      if (lamportsReceived <= 0) {
+        console.error("[x402] No SOL received by recipient in this transaction")
+        return false
+      }
+
+      const solUsd = await fetchSolUsdPrice()
+      const expectedSolLamports = Math.floor((expectedAmountUsd / solUsd) * LAMPORTS_PER_SOL)
+      // Allow 2% tolerance or minimum 5k lamports (~0.000005 SOL)
+      const solTolerance = Math.max(5000, Math.floor(expectedSolLamports * 0.02))
+      const solDiff = Math.abs(lamportsReceived - expectedSolLamports)
+
+      if (solDiff > solTolerance) {
+        console.error("[x402] SOL amount mismatch:", {
+          expected: expectedSolLamports,
+          actual: lamportsReceived,
+          diff: solDiff,
+          tolerance: solTolerance,
+          solUsd,
+        })
+        return false
+      }
+
+      console.log("[x402] SOL transaction verified successfully:", {
+        signature: transactionSignature,
+        amountLamports: lamportsReceived,
+        expectedLamports: expectedSolLamports,
+        solUsd,
       })
+      return true
+    } catch (e) {
+      console.error("[x402] SOL verification path failed:", e)
       return false
     }
-    
-    console.log("[x402] Transaction verified successfully:", {
-      signature: transactionSignature,
-      amount: transferAmount,
-      expectedAmount: expectedLamports,
-    })
-    
-    return true
   } catch (error) {
     console.error("[x402] Transaction verification failed:", error)
     return false
