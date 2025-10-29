@@ -47,7 +47,8 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
     })
   }
 
-  const displayKey = plainKey || apiKey.key_prefix
+  const displayKey = showFullKey && plainKey ? plainKey : apiKey.key_prefix
+  const hasFullKey = Boolean(plainKey)
 
   return (
     <Card className="bg-white/5 border-white/10 p-4 space-y-3">
@@ -80,7 +81,7 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
       </div>
 
       {/* API Key Display */}
-      {plainKey && (
+      {hasFullKey && (
         <div className="bg-amber-500/10 border border-amber-400/30 rounded-lg p-3 text-xs text-amber-100">
           <strong>⚠️ Save this key now!</strong> For security, it won't be shown again.
         </div>
@@ -89,10 +90,10 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
       <div className="bg-black/40 rounded-lg p-3 space-y-2">
         <div className="flex items-center justify-between gap-2">
           <code className="text-xs font-mono break-all flex-1 text-white">
-            {showFullKey && plainKey ? plainKey : displayKey}
+            {displayKey}
           </code>
           <div className="flex items-center gap-1 flex-shrink-0">
-            {plainKey && (
+            {hasFullKey && (
               <button
                 onClick={() => setShowFullKey(!showFullKey)}
                 className="text-cyan-400 hover:text-cyan-300 p-1.5 rounded hover:bg-white/5"

@@ -118,24 +118,29 @@ export default function DashboardPage() {
     if (!walletAddress) return
 
     try {
-      const res = await fetch(`/api/account/keys/${keyId}?wallet=${walletAddress}`, {
-        method: "DELETE",
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-
-      toast({
-        title: "API Key Deleted",
-        description: "The API key has been permanently removed and can no longer be used",
-      })
-
+      // Immediately remove from UI (optimistic update)
+      setApiKeys(prev => prev.filter(key => key.id !== keyId))
+      
       // Clear the created key if it was the one being revoked
       if (createdKey?.apiKey.id === keyId) {
         setCreatedKey(null)
       }
 
-      fetchDashboardData()
+      const res = await fetch(`/api/account/keys/${keyId}?wallet=${walletAddress}`, {
+        method: "DELETE",
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        // If it failed, restore the key list
+        fetchDashboardData()
+        throw new Error(data.error)
+      }
+
+      toast({
+        title: "API Key Deleted",
+        description: "The API key has been permanently removed and can no longer be used",
+      })
     } catch (error: any) {
       toast({
         title: "Error",
