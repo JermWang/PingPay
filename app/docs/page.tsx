@@ -81,6 +81,100 @@ export default function DocsPage() {
             </div>
           </section>
 
+          {/* API Endpoints with Examples */}
+          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-4 text-[#14F195]">API Endpoints (with Examples)</h2>
+            <p className="text-gray-300 mb-6">
+              Replace <code className="bg-white/10 px-1 rounded">YOUR_WALLET_ADDRESS</code> (or <code className="bg-white/10 px-1 rounded">YOUR_VOTE_ACCOUNT</code>) with your own values. For paid endpoints, use an API key or x402 headers after payment.
+            </p>
+
+            <div className="space-y-8">
+              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-2">GET /api/solana/balance?address=...</h3>
+                <p className="text-gray-400 mb-3 text-sm">Returns the SOL balance for a wallet.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
+                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS`}</pre>
+                  </div>
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
+                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS"`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-2">GET /api/solana/tokens?address=...</h3>
+                <p className="text-gray-400 mb-3 text-sm">Lists SPL tokens held by a wallet.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
+                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS`}</pre>
+                  </div>
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
+                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS"`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-2">GET /api/solana/transactions?address=...</h3>
+                <p className="text-gray-400 mb-3 text-sm">Recent transactions for a wallet.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
+                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS`}</pre>
+                  </div>
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
+                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS"`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-2">GET /api/solana/nft?address=...</h3>
+                <p className="text-gray-400 mb-3 text-sm">Fetch NFTs owned by a wallet.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
+                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS`}</pre>
+                  </div>
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
+                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS"`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-2">GET /api/solana/validator?vote_account=...</h3>
+                <p className="text-gray-400 mb-3 text-sm">Validator info for a vote account.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
+                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT`}</pre>
+                  </div>
+                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
+                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT"`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-2">One‑Time Payment (x402) Headers</h3>
+                <p className="text-gray-400 mb-3 text-sm">After paying with SOL or USDC, include these headers to access without an API key.</p>
+                <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                  <pre className="text-gray-300">{`curl -H "X-Quote-Id: YOUR_QUOTE_ID" -H "X-Transaction-Signature: YOUR_SOLANA_TX_SIGNATURE" "https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS"`}</pre>
+                </div>
+                <p className="text-xs text-yellow-300 mt-2">Important: Replace the example address and placeholders with your own values.</p>
+              </div>
+            </div>
+          </section>
+
           {/* Example Request */}
           <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
             <h2 className="text-2xl font-bold mb-4 text-[#14F195]">Example Request</h2>

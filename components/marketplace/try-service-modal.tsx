@@ -607,6 +607,26 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                 </ol>
               </div>
 
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-3 text-xs text-white shadow-lg">
+                <strong>🔎 API Call Examples</strong>
+                <p className="mt-1 text-white/80">Replace the example address with your own wallet:</p>
+                <div className="mt-2 grid md:grid-cols-2 gap-2">
+                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto">
+                    <div className="text-white/60 mb-1">Beginner (direct URL)</div>
+                    <pre className="text-white/90">{buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}</pre>
+                  </div>
+                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto">
+                    <div className="text-white/60 mb-1">Expert (curl with API key)</div>
+                    <pre className="text-white/90">{`curl -H "Authorization: Bearer YOUR_API_KEY" "${buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}"`}</pre>
+                  </div>
+                </div>
+                <div className="mt-2 bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto">
+                  <div className="text-white/60 mb-1">One‑Time Payment (x402) headers after paying</div>
+                  <pre className="text-white/90">{`curl -H "X-Quote-Id: ${quote.quoteId}" -H "X-Transaction-Signature: YOUR_SOLANA_TX_SIGNATURE" "${buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}"`}</pre>
+                </div>
+                <p className="mt-2 text-xs text-yellow-300">Important: Replace the example address and placeholders with your own values.</p>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm text-white/80">Transaction Signature</label>
                 <input
