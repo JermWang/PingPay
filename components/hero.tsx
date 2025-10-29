@@ -26,7 +26,8 @@ export function Hero() {
     apiCount: 0
   })
   
-  const TOKEN_ADDRESS = "COMING SOON" // Replace with actual token address when ready
+  const TOKEN_ADDRESS = "CK4CJpLHQBtW2xaJ43SGVBSMkZfxhciQNuftimRKpump"
+  const TOKEN_ADDRESS_SHORT = `${TOKEN_ADDRESS.slice(0, 4)}...${TOKEN_ADDRESS.slice(-4)}`
   
   const handleCopyToken = () => {
     navigator.clipboard.writeText(TOKEN_ADDRESS)
@@ -177,7 +178,7 @@ export function Hero() {
               <Copy className="w-3 h-3 md:w-4 md:h-4 text-primary group-hover:text-primary/80" />
             )}
             <span className="text-xs md:text-sm font-medium text-white group-hover:text-primary/90">
-              {copied ? "Copied!" : TOKEN_ADDRESS}
+              {copied ? "Copied!" : TOKEN_ADDRESS_SHORT}
             </span>
           </button>
 
