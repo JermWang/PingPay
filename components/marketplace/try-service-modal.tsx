@@ -553,11 +553,15 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                       <div className="w-full border-t border-white/20"></div>
                     </div>
                     <div className="relative flex justify-center text-xs">
-                      <span className="px-2 bg-black text-white/60">OR</span>
+                      <span className="px-2 bg-black text-white/60">OR Manual Payment</span>
                     </div>
                   </div>
                 </div>
-              ) : null}
+              ) : (
+                <div className="bg-amber-500/20 backdrop-blur-md border border-amber-400/40 rounded-lg p-3 text-xs text-white shadow-lg">
+                  <strong>💡 Connect Your Wallet:</strong> Connect your Solana wallet at the top right to enable instant payment with one click!
+                </div>
+              )}
 
               <div className="bg-amber-500/20 backdrop-blur-md border border-amber-400/40 rounded-lg p-3 text-xs text-white shadow-lg">
                 <strong>📋 Manual Payment Instructions:</strong>
