@@ -59,9 +59,9 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/docs" className="text-muted-foreground hover:text-foreground">
                   Documentation
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -70,17 +70,17 @@ export function Footer() {
             <div className="font-semibold mb-4">Resources</div>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/docs#api-reference" className="text-muted-foreground hover:text-foreground">
                   API Reference
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground">
+                <a href="https://github.com/JermWang/PingPay" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   x402 Spec
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground">
+                <a href="https://solana.com/docs" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   Solana Docs
                 </a>
               </li>
