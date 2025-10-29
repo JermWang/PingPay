@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ArrowRight, Zap } from "lucide-react"
+import { ArrowRight, Zap, Copy, Check } from "lucide-react"
 import Link from "next/link"
 import { GlowButton } from "@/components/shared/GlowButton"
 import { NeonText } from "@/components/shared/NeonText"
 import dynamic from "next/dynamic"
 import { ParticleBackground } from "@/components/shared/particle-background"
+import { useToast } from "@/hooks/use-toast"
 
 // Temporarily using simple version to debug WebGL context issue
 const Hero3DScene = dynamic(
@@ -20,12 +21,36 @@ const Hero3DScene = dynamic(
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [copied, setCopied] = useState(false)
+  const { toast } = useToast()
+  
+  // Token contract address - replace "coming soon" with actual address when ready
+  const tokenAddress = "coming soon"
+  
   const handleScrollToHowItWorks = () => {
     const target = document.getElementById("how-it-works")
     if (!target) return
     const navOffset = 72 // fixed navbar height compensation
     const y = target.getBoundingClientRect().top + window.scrollY - navOffset
     window.scrollTo({ top: y, behavior: "smooth" })
+  }
+
+  const handleCopyAddress = () => {
+    if (tokenAddress === "coming soon") {
+      toast({
+        title: "Token Coming Soon",
+        description: "The token contract address will be available soon!",
+      })
+      return
+    }
+    
+    navigator.clipboard.writeText(tokenAddress)
+    setCopied(true)
+    toast({
+      title: "Copied!",
+      description: "Token address copied to clipboard",
+    })
+    setTimeout(() => setCopied(false), 2000)
   }
 
   // Calculate scroll progress for 3D animation
@@ -125,51 +150,61 @@ export function Hero() {
       {/* Local particle layer to ensure visibility above 3D on landing page */}
       <ParticleBackground />
 
-      <div className="container mx-auto min-h-[88vh] md:min-h-screen grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8 px-4 relative z-10">
+      <div className="container mx-auto min-h-[88vh] md:min-h-screen grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8 px-4 py-8 md:py-0 relative z-10">
         <div className="md:col-span-5 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel glass-outline mb-8">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Powered by Solana & x402</span>
-          </div>
+          <button
+            onClick={handleCopyAddress}
+            className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full glass-panel glass-outline mb-6 md:mb-8 hover:border-primary/50 transition-all duration-300 cursor-pointer group"
+          >
+            <Zap className="w-3.5 md:w-4 h-3.5 md:h-4 text-primary" />
+            <span className="text-xs md:text-sm font-medium text-primary font-mono">
+              {tokenAddress}
+            </span>
+            {copied ? (
+              <Check className="w-3 md:w-3.5 h-3 md:h-3.5 text-green-400" />
+            ) : (
+              <Copy className="w-3 md:w-3.5 h-3 md:h-3.5 text-primary/60 group-hover:text-primary transition-colors" />
+            )}
+          </button>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-6 text-balance leading-tight">
             <span>Pay-Per-Request APIs</span>
             <br />
             <NeonText>Powered by Solana</NeonText>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto md:mx-0 text-pretty">
+          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 md:mb-12 max-w-3xl mx-auto md:mx-0 text-pretty px-2 sm:px-0">
             Access premium APIs for pennies. Pay only for what you use with instant USDC micropayments on Solana.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start items-center">
-            <Link href="/marketplace">
-              <GlowButton label="Browse APIs" className="text-lg px-8 py-4 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center md:justify-start items-stretch sm:items-center px-2 sm:px-0">
+            <Link href="/marketplace" className="w-full sm:w-auto">
+              <GlowButton label="Browse APIs" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 w-full">
                 Browse APIs
               </GlowButton>
             </Link>
-            <Link href="/creators">
-              <GlowButton label="Creators Marketplace" className="text-lg px-8 py-4 w-full sm:w-auto">
+            <Link href="/creators" className="w-full sm:w-auto">
+              <GlowButton label="Creators Marketplace" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 w-full">
                 Creators Marketplace
               </GlowButton>
             </Link>
-            <GlowButton onClick={handleScrollToHowItWorks} label="How It Works" className="text-lg px-8 py-4 w-full sm:w-auto">
+            <GlowButton onClick={handleScrollToHowItWorks} label="How It Works" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 w-full sm:w-auto">
               How It Works
             </GlowButton>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
+          <div className="mt-10 md:mt-16 grid grid-cols-3 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">$0.01</div>
-              <div className="text-sm text-muted-foreground">Starting price per request</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">$0.01</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Starting price</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">&lt;1s</div>
-              <div className="text-sm text-muted-foreground">Payment verification time</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">&lt;1s</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Verification</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">5+</div>
-              <div className="text-sm text-muted-foreground">Solana APIs available</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">5+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">APIs</div>
             </div>
           </div>
         </div>
