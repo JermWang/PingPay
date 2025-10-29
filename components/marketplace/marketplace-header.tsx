@@ -1,9 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, TrendingUp, Zap, Users, DollarSign, Shield } from "lucide-react"
+import { ArrowLeft, TrendingUp, Zap, Users, DollarSign } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { usePlatformStats } from "@/hooks/use-platform-stats"
 
 export function MarketplaceHeader() {
@@ -47,13 +46,6 @@ export function MarketplaceHeader() {
         
         <div className="container mx-auto px-4 py-16 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-6">
-            {/* Badge */}
-            <div className="flex justify-center">
-              <Badge className="bg-[#9945FF]/20 text-[#9945FF] border-[#9945FF]/30 px-4 py-1.5 text-sm">
-                <Shield className="w-3 h-3 mr-1.5" />
-                Powered by Solana x402
-              </Badge>
-            </div>
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-[#14F195] to-[#9945FF] bg-clip-text text-transparent leading-tight">
