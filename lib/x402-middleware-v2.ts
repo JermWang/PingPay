@@ -181,7 +181,7 @@ async function handleWalletAuth(
     const quote = await generateQuote(service.id, service.price_usd)
     await db.createQuote(quote)
     
-    const response = create402Response(quote)
+    const response = await create402Response(quote)
     return new Response(response.body, {
       ...response,
       headers: {

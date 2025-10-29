@@ -21,6 +21,8 @@ type QuoteState = {
   amountUsd: number
   address: string
   expiresAt: string
+  asset?: 'USDC' | 'SOL'
+  tokenAccount?: string
 } | null
 
 const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v') // USDC on mainnet
@@ -101,7 +103,9 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         const amt = res.headers.get("X-Amount-USD") || data.amount_usd
         const addr = res.headers.get("X-Solana-Address") || data.solana_address
         const exp = res.headers.get("X-Expires-At") || data.expires_at
-        setQuote({ quoteId: qid, amountUsd: Number(amt), address: String(addr), expiresAt: String(exp) })
+        const asset = (res.headers.get('X-Asset') || data.asset || 'USDC') as 'USDC' | 'SOL'
+        const tokenAccount = res.headers.get('X-Token-Account') || data.receiver_token_account
+        setQuote({ quoteId: qid, amountUsd: Number(amt), address: String(addr), expiresAt: String(exp), asset, tokenAccount })
       } else if (res.ok) {
         const data = await res.json()
         setResult(data)
@@ -144,32 +148,25 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
       // Get a working connection
       const connection = await getConnection()
+      const recipientPubkey = new PublicKey(quote.address)
 
       let txSignature: string
 
-      if (paymentMethod === 'usdc') {
+      if ((quote.asset || 'USDC') === 'USDC' && paymentMethod === 'usdc') {
         // USDC Transfer
-        // quote.address is now the correct USDC ATA for the recipient (derived server-side)
-        const recipientUsdcAta = new PublicKey(quote.address)
         const senderTokenAccount = await getAssociatedTokenAddress(USDC_MINT, publicKey)
-
-        console.log('💳 USDC Payment Details:', {
-          sender: publicKey.toBase58(),
-          senderAta: senderTokenAccount.toBase58(),
-          recipientAta: recipientUsdcAta.toBase58(),
-          amount: quote.amountUsd
-        })
+        const recipientTokenAccount = quote.tokenAccount
+          ? new PublicKey(quote.tokenAccount)
+          : await getAssociatedTokenAddress(USDC_MINT, recipientPubkey)
 
         const senderInfo = await connection.getAccountInfo(senderTokenAccount)
-        const recipientInfo = await connection.getAccountInfo(recipientUsdcAta)
+        const recipientInfo = await connection.getAccountInfo(recipientTokenAccount)
 
         const amountInDecimals = Math.floor(quote.amountUsd * 1_000_000) // USDC has 6 decimals
 
         const transaction = new Transaction()
-        
-        // Create sender's USDC ATA if needed
+        // Ensure ATAs exist (payer will fund creation if missing)
         if (!senderInfo) {
-          console.log('Creating sender USDC ATA...')
           transaction.add(
             createAssociatedTokenAccountInstruction(
               publicKey,
@@ -179,20 +176,12 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
             )
           )
         }
-        
-        // Note: recipient ATA creation is handled server-side during quote generation
-        // But we'll check and create if somehow it doesn't exist
-        if (!recipientInfo) {
-          console.warn('Recipient USDC ATA does not exist - this should have been created server-side')
-          // We can't create it without knowing the owner, so this will likely fail
-          // The quote should have already ensured the ATA exists
-        }
+        // Do not create receiver ATA; assume server provided valid token account
 
-        // Transfer USDC to the recipient's ATA
         transaction.add(
           createTransferInstruction(
             senderTokenAccount,
-            recipientUsdcAta,
+            recipientTokenAccount,
             publicKey,
             amountInDecimals,
             [],
@@ -224,21 +213,13 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         }
 
       } else {
-        // SOL Transfer - quote.address is the wallet address for SOL
-        const recipientWallet = new PublicKey(quote.address)
+        // SOL Transfer
         const amountInLamports = Math.floor((quote.amountUsd / solPrice) * LAMPORTS_PER_SOL)
-
-        console.log('◎ SOL Payment Details:', {
-          sender: publicKey.toBase58(),
-          recipient: recipientWallet.toBase58(),
-          amountSol: (amountInLamports / LAMPORTS_PER_SOL).toFixed(6),
-          amountUsd: quote.amountUsd
-        })
 
         const transaction = new Transaction().add(
           SystemProgram.transfer({
             fromPubkey: publicKey,
-            toPubkey: recipientWallet,
+            toPubkey: recipientPubkey,
             lamports: amountInLamports,
           })
         )
@@ -272,17 +253,11 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
       toast({
         title: "Transaction Confirmed!",
-        description: "Waiting for network indexing...",
+        description: "Verifying payment with API...",
       })
 
-      // Wait 3 seconds for RPC nodes to index the transaction
-      console.log('⏳ Waiting 3 seconds for RPC indexing...')
-      await new Promise(resolve => setTimeout(resolve, 3000))
-
-      toast({
-        title: "Verifying Payment",
-        description: "Checking transaction on-chain...",
-      })
+      // Optional small delay to allow RPC indexers to catch up
+      await new Promise((r) => setTimeout(r, 2000))
 
       // Now verify with the API
       console.log('🔍 Verifying with API. Quote ID:', quote.quoteId, 'Signature:', txSignature)

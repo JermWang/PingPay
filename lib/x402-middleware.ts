@@ -37,7 +37,7 @@ export async function withX402Protection(
     if (!transactionSignature || !quoteId) {
       const quote = await generateQuote(service.id, service.price_usd)
       await db.createQuote(quote)
-      return create402Response(quote)
+      return await create402Response(quote)
     }
 
     // Verify the quote exists and is valid

@@ -32,7 +32,6 @@ export interface Quote {
   service_id: string
   amount_usd: number
   solana_address: string
-  payment_token?: string // 'USDC' | 'SOL' - tracks which token to use
   expires_at: string
   created_at: string
 }
