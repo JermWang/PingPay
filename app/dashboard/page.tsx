@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
+import dynamic from "next/dynamic"
 import { useWallet } from "@solana/wallet-adapter-react"
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { GlowButton } from "@/components/shared/GlowButton"
 import { GlassPanel } from "@/components/shared/GlassPanel"
 import { ApiKeyCard } from "@/components/account/api-key-card"
@@ -24,6 +24,11 @@ import type { ApiKey, AccountTransaction, UserAccount } from "@/lib/types"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+const WalletMultiButton = dynamic(
+  () => import("@solana/wallet-adapter-react-ui").then((mod) => mod.WalletMultiButton),
+  { ssr: false }
+)
 
 export default function DashboardPage() {
   const { publicKey } = useWallet()
