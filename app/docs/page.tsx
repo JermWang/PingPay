@@ -175,6 +175,42 @@ export default function DocsPage() {
             </div>
           </section>
 
+          {/* x402 Headers (Standard + Extensions) */}
+          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">x402 Headers</h2>
+            <div className="space-y-6 text-gray-300">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Standard (spec)</h3>
+                <ul className="list-disc ml-5 space-y-1 text-sm">
+                  <li><code className="bg-white/10 px-1 rounded">X-Payment-Required</code>: always <code className="bg-white/10 px-1 rounded">true</code> on 402</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-Quote-Id</code>: unique quote identifier</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-Amount-USD</code>: price for this request</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-Solana-Address</code>: receiver address to send payment</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-Expires-At</code>: ISO timestamp when quote expires</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Client Retry (after paying)</h3>
+                <ul className="list-disc ml-5 space-y-1 text-sm">
+                  <li><code className="bg-white/10 px-1 rounded">X-Transaction-Signature</code>: Solana transaction signature</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-Quote-Id</code>: the same quote id you received</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">PingPay Extensions</h3>
+                <ul className="list-disc ml-5 space-y-1 text-sm">
+                  <li><code className="bg-white/10 px-1 rounded">X-402-Version</code>: current protocol version (server)</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-402-Supported</code>: supported auth modes (e.g., signature,wallet,apikey)</li>
+                  <li><code className="bg-white/10 px-1 rounded">X-Wallet-Address</code>: provided by client if a wallet is connected</li>
+                </ul>
+              </div>
+
+              <p className="text-xs text-yellow-300">Tip: See <a className="underline" href="https://www.x402.org/" target="_blank" rel="noreferrer">x402.org</a> for the baseline spec.</p>
+            </div>
+          </section>
+
           {/* Example Request */}
           <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
             <h2 className="text-2xl font-bold mb-4 text-[#14F195]">Example Request</h2>

@@ -17,6 +17,62 @@ async function fetchSolUsdPrice(): Promise<number> {
   return Number(price)
 }
 
+async function verifyWithHelius(
+  signature: string,
+  expectedAmountUsd: number,
+  expectedRecipient: string
+): Promise<boolean> {
+  const apiKey = process.env.HELIUS_API_KEY || process.env.NEXT_PUBLIC_HELIUS_API_KEY
+  if (!apiKey) return false
+  try {
+    const url = `https://api.helius.xyz/v0/transactions/?api-key=${apiKey}`
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ transactions: [signature] })
+    })
+    if (!res.ok) return false
+    const data = await res.json()
+    const tx = Array.isArray(data) ? data[0] : null
+    if (!tx) return false
+
+    // Check USDC token transfers first
+    const usdcMint = USDC_MINT_ADDRESS
+    const tokenTransfers: any[] = tx?.tokenTransfers || []
+    for (const t of tokenTransfers) {
+      const isUsdc = (t.mint || t.mintAddress) === usdcMint
+      const toUser = t.toUserAccount || t.to || t.toTokenAccountOwner
+      const rawAmount = Number(t.tokenAmount || t.amount || 0)
+      if (isUsdc && toUser === expectedRecipient && rawAmount > 0) {
+        // tokenAmount is usually in units (not decimals), but some schemas use raw amount.
+        // Treat it as 6-decimal units when value is small
+        const expected = Math.floor(expectedAmountUsd * 1_000_000)
+        const diff = Math.abs(rawAmount - expected)
+        const tol = Math.max(1, Math.floor(expected * 0.02))
+        if (diff <= tol) return true
+      }
+    }
+
+    // Fallback: check native SOL transfers
+    const nativeTransfers: any[] = tx?.nativeTransfers || []
+    if (nativeTransfers?.length) {
+      const toRecipient = nativeTransfers.find((n: any) => (n.toUserAccount === expectedRecipient) && Number(n.amount || 0) > 0)
+      if (toRecipient) {
+        const solUsd = await fetchSolUsdPrice()
+        const expectedLamports = Math.floor((expectedAmountUsd / solUsd) * LAMPORTS_PER_SOL)
+        const diff = Math.abs(Number(toRecipient.amount) - expectedLamports)
+        const tol = Math.max(5000, Math.floor(expectedLamports * 0.02))
+        if (diff <= tol) return true
+      }
+    }
+
+    return false
+  } catch (e) {
+    console.error("[x402] Helius verification failed:", e)
+    return false
+  }
+}
+
 /**
  * Generate a payment quote for an API request
  */
@@ -53,6 +109,9 @@ export function create402Response(quote: Quote): Response {
     headers: {
       "Content-Type": "application/json",
       "X-Payment-Required": "true",
+      // x402 metadata headers
+      "X-402-Version": "1",
+      "X-402-Supported": "signature,wallet,apikey",
       "X-Quote-Id": quote.id,
       "X-Amount-USD": quote.amount_usd.toString(),
       "X-Solana-Address": quote.solana_address,
@@ -312,8 +371,20 @@ export async function verifyTransaction(
     } catch (e) {
       console.error("[x402] ❌ SOL verification path failed:", e)
       console.log("[x402] ======== VERIFICATION END (FAILED) ========")
-      return false
+      // Continue to Helius fallback
     }
+
+    // FINAL FALLBACK: verify via Helius Enhanced Transactions API
+    console.log("[x402] Attempting Helius verification fallback...")
+    const heliusOk = await verifyWithHelius(transactionSignature, expectedAmountUsd, expectedRecipient)
+    if (heliusOk) {
+      console.log("[x402] ✅✅✅ Helius verification succeeded")
+      console.log("[x402] ======== VERIFICATION END (SUCCESS) ========")
+      return true
+    }
+
+    console.log("[x402] ❌ All verification paths failed")
+    return false
   } catch (error) {
     console.error("[x402] ❌ Transaction verification failed:", error)
     console.log("[x402] ======== VERIFICATION END (FAILED) ========")
