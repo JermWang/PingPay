@@ -1,0 +1,45 @@
+import { NextRequest, NextResponse } from "next/server"
+import { isUsingRealDatabase } from "@/lib/supabase-client"
+import * as SupabaseClient from "@/lib/supabase-client"
+import * as MockDatabase from "@/lib/supabase-mock"
+import { creatorAuthSchema, validateSchema } from "@/lib/validations"
+import { rateLimit } from "@/lib/rate-limit"
+
+// Use real database if configured, otherwise use mock
+const db = isUsingRealDatabase ? SupabaseClient : MockDatabase
+
+export async function POST(request: NextRequest) {
+  try {
+    // Rate limit check
+    const rateLimitResult = await rateLimit(request, "auth")
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response
+    }
+
+    const body = await request.json()
+    
+    // Validate input
+    const validation = validateSchema(creatorAuthSchema, body)
+    if (!validation.success) {
+      return NextResponse.json({ error: "Validation failed", details: validation.errors }, { status: 400 })
+    }
+    
+    const { walletAddress } = validation.data
+
+    // Get existing creator or create new one
+    let creator = await db.getCreator(walletAddress)
+    
+    if (!creator) {
+      creator = await db.createCreator({ wallet_address: walletAddress })
+    }
+
+    return NextResponse.json({ creator })
+  } catch (error) {
+    console.error("[Creator Auth] Error:", error)
+    return NextResponse.json(
+      { error: "Failed to authenticate creator" },
+      { status: 500 }
+    )
+  }
+}
+
