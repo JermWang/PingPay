@@ -27,8 +27,8 @@ export function Hero() {
     totalRequests: 37
   })
   
-  const TOKEN_ADDRESS = "CK4CJpLHQBtW2xaJ43SGVBSMkZfxhciQNuftimRKpump"
-  const TOKEN_ADDRESS_SHORT = `${TOKEN_ADDRESS.slice(0, 4)}...${TOKEN_ADDRESS.slice(-4)}`
+  const TOKEN_ADDRESS = "COMING SOON"
+  const TOKEN_ADDRESS_SHORT = TOKEN_ADDRESS
   
   const handleCopyToken = () => {
     navigator.clipboard.writeText(TOKEN_ADDRESS)
