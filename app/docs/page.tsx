@@ -148,12 +148,6 @@ if (response.status === 402) {
             </p>
             <div className="flex flex-wrap gap-4">
               <a
-                href="#"
-                className="px-6 py-2 bg-white/5 border border-white/10 rounded-lg hover:border-[#14F195]/50 transition-colors"
-              >
-                Discord
-              </a>
-              <a
                 href="https://github.com/JermWang/PingPay"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -162,7 +156,9 @@ if (response.status === 402) {
                 GitHub
               </a>
               <a
-                href="#"
+                href="https://x.com/PingPaySol"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-6 py-2 bg-white/5 border border-white/10 rounded-lg hover:border-[#14F195]/50 transition-colors"
               >
                 Twitter

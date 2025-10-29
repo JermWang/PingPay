@@ -93,7 +93,7 @@ export function Footer() {
               <a href="https://github.com/JermWang/PingPay" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                 <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground">
+              <a href="https://x.com/PingPaySol" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                 <Twitter className="w-5 h-5" />
               </a>
             </div>
