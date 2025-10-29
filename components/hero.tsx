@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ArrowRight, Zap } from "lucide-react"
+import { ArrowRight, Zap, Copy, Check } from "lucide-react"
 import Link from "next/link"
 import { GlowButton } from "@/components/shared/GlowButton"
 import { NeonText } from "@/components/shared/NeonText"
@@ -20,6 +20,16 @@ const Hero3DScene = dynamic(
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [copied, setCopied] = useState(false)
+  
+  const TOKEN_ADDRESS = "COMING SOON" // Replace with actual token address when ready
+  
+  const handleCopyToken = () => {
+    navigator.clipboard.writeText(TOKEN_ADDRESS)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  
   const handleScrollToHowItWorks = () => {
     const target = document.getElementById("how-it-works")
     if (!target) return
@@ -127,10 +137,19 @@ export function Hero() {
 
       <div className="container mx-auto min-h-[88vh] md:min-h-screen grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8 px-4 relative z-10">
         <div className="md:col-span-5 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass-panel glass-outline mb-3 md:mb-8">
-            <Zap className="w-3 h-3 md:w-4 md:h-4 text-primary" />
-            <span className="text-xs md:text-sm font-medium text-primary">Powered by Solana & x402</span>
-          </div>
+          <button
+            onClick={handleCopyToken}
+            className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass-panel glass-outline mb-3 md:mb-8 hover:border-primary/50 transition-colors cursor-pointer group"
+          >
+            {copied ? (
+              <Check className="w-3 h-3 md:w-4 md:h-4 text-green-400" />
+            ) : (
+              <Copy className="w-3 h-3 md:w-4 md:h-4 text-primary group-hover:text-primary/80" />
+            )}
+            <span className="text-xs md:text-sm font-medium text-primary group-hover:text-primary/80">
+              {copied ? "Copied!" : TOKEN_ADDRESS}
+            </span>
+          </button>
 
           <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold mb-3 md:mb-6 text-balance leading-tight">
             <span>Pay-Per-Request APIs</span>
