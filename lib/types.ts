@@ -1,6 +1,7 @@
 export interface Creator {
   id: string
   wallet_address: string
+  payout_wallet?: string
   display_name?: string
   bio?: string
   created_at: string

@@ -103,13 +103,26 @@ export async function requestWithdrawal(
     throw new Error("Insufficient balance")
   }
 
+  // Destination wallet: use provided or stored payout_wallet
+  let destinationWallet = walletAddress
+  try {
+    const { data: creatorRecord } = await supabase!
+      .from("creators")
+      .select("wallet_address,payout_wallet")
+      .eq("id", creatorId)
+      .single()
+    if (creatorRecord?.payout_wallet) {
+      destinationWallet = creatorRecord.payout_wallet
+    }
+  } catch {}
+
   // Create withdrawal request
   const { data: request, error: createError } = await supabase
     .from("withdrawal_requests")
     .insert({
       creator_id: creatorId,
       amount_usd: amountUsd,
-      wallet_address: walletAddress,
+      wallet_address: destinationWallet,
       status: "pending",
     })
     .select()

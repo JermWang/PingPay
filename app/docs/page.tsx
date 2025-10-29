@@ -62,7 +62,32 @@ export default function DocsPage() {
         </div>
 
         {/* Content Sections */}
-        <div className="space-y-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8">
+          {/* Mini TOC */}
+          <aside className="hidden lg:block sticky top-24 self-start bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 h-max">
+            <div className="text-sm text-gray-400 font-semibold mb-2">On this page</div>
+            <nav className="text-sm space-y-2">
+              <a href="#overview" className="block text-gray-300 hover:text-white">Overview</a>
+              <a href="#quick-start" className="block text-gray-300 hover:text-white">Quick Start</a>
+              <a href="#auth" className="block text-gray-300 hover:text-white">Auth Methods</a>
+              <a href="#try-now" className="block text-gray-300 hover:text-white">Try Now</a>
+              <a href="#marketplace" className="block text-gray-300 hover:text-white">Marketplace</a>
+              <a href="#creators" className="block text-gray-300 hover:text-white">Creators</a>
+              <a href="#payouts" className="block text-gray-300 hover:text-white">Payouts & Withdrawals</a>
+              <a href="#security" className="block text-gray-300 hover:text-white">Security & Limits</a>
+              <a href="#troubleshooting" className="block text-gray-300 hover:text-white">Troubleshooting</a>
+              <a href="#faq" className="block text-gray-300 hover:text-white">FAQ</a>
+            </nav>
+          </aside>
+
+          <div className="space-y-12">
+            <section id="overview" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+              <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">Overview</h2>
+              <p className="text-gray-300">
+                Ping Pay lets you monetize APIs with Solana. Users can pay per request (x402), or use API keys with prepaid balance.
+                Our marketplace features creator-made APIs so creators earn revenue directly to their wallet.
+              </p>
+            </section>
           {/* How it Works */}
           <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
             <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">How It Works</h2>
@@ -249,7 +274,7 @@ if (response.status === 402) {
           </section>
 
           {/* Creator API */}
-          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+          <section id="creators" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
             <h2 className="text-2xl font-bold mb-4 text-[#00FFA3]">For API Creators</h2>
             <div className="prose prose-invert max-w-none">
               <p className="text-gray-300 mb-4">
@@ -269,6 +294,18 @@ if (response.status === 402) {
                   Get Started as a Creator
                 </Link>
               </div>
+            </div>
+          </section>
+
+          {/* Payouts & Withdrawals */}
+          <section id="payouts" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-4 text-[#14F195]">Payouts & Withdrawals</h2>
+            <div className="prose prose-invert max-w-none">
+              <ol className="space-y-2 text-gray-300">
+                <li>1. Go to Creators → set your <strong>Payout Wallet</strong>. We’ll use this for withdrawals.</li>
+                <li>2. Earn revenue as users pay for your API calls (view earnings in your dashboard).</li>
+                <li>3. Request a withdrawal once you hit the minimum; we’ll send USDC to your payout wallet.</li>
+              </ol>
             </div>
           </section>
 
@@ -297,6 +334,7 @@ if (response.status === 402) {
               </a>
             </div>
           </section>
+        </div>
         </div>
       </div>
     </div>

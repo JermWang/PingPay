@@ -4,10 +4,12 @@ import { useEffect, useState } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { Plus, TrendingUp, DollarSign, Activity, Clock, Users, Zap } from "lucide-react"
-import { GlowButton } from "@/components/shared/GlowButton"
+// duplicate import removed
 import { CreateApiModalEnhanced } from "@/components/creators/create-api-modal-enhanced"
 import { ApiListItem } from "@/components/creators/api-list-item"
 import type { Service, Creator } from "@/lib/types"
+import { Input } from "@/components/ui/input"
+import { GlowButton } from "@/components/shared/GlowButton"
 
 export default function CreatorsPage() {
   const { publicKey, connected } = useWallet()
@@ -15,6 +17,9 @@ export default function CreatorsPage() {
   const [services, setServices] = useState<Service[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [payoutWallet, setPayoutWallet] = useState<string>("")
+  const [savingPayout, setSavingPayout] = useState(false)
+  const [payoutMsg, setPayoutMsg] = useState<string>("")
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -36,6 +41,11 @@ export default function CreatorsPage() {
       
       const data = await response.json()
       setCreator(data.creator)
+      if (data.creator?.payout_wallet) {
+        setPayoutWallet(data.creator.payout_wallet)
+      } else if (publicKey) {
+        setPayoutWallet(publicKey.toBase58())
+      }
 
       // Load creator's services
       const servicesResponse = await fetch(`/api/creators/services?creatorId=${data.creator.id}`)
@@ -51,6 +61,32 @@ export default function CreatorsPage() {
   const handleServiceCreated = (newService: Service) => {
     setServices([newService, ...services])
     setIsModalOpen(false)
+  }
+
+  const savePayoutWallet = async () => {
+    if (!creator) return
+    const addr = payoutWallet.trim()
+    if (addr.length < 32 || addr.length > 64) {
+      setPayoutMsg("Invalid wallet address format")
+      return
+    }
+    try {
+      setSavingPayout(true)
+      setPayoutMsg("")
+      const res = await fetch('/api/creators/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ creatorId: creator.id, payout_wallet: addr })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to save')
+      setCreator(data.creator)
+      setPayoutMsg("Payout wallet saved")
+    } catch (e: any) {
+      setPayoutMsg(e.message || 'Failed to save')
+    } finally {
+      setSavingPayout(false)
+    }
   }
 
   const handleServiceUpdated = (updatedService: Service) => {
@@ -125,6 +161,24 @@ export default function CreatorsPage() {
             )}
           </div>
         </div>
+
+        {/* Payout Wallet */}
+        {creator && (
+          <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-6 backdrop-blur-xl bg-white/5 border border-white/10 mb-8">
+            <h2 className="text-xl font-bold text-white mb-3">Payout Wallet</h2>
+            <p className="text-gray-400 text-sm mb-3">We send your earnings to this address when you withdraw.</p>
+            <div className="flex items-center gap-2 max-w-xl">
+              <Input
+                value={payoutWallet}
+                onChange={(e) => setPayoutWallet(e.target.value)}
+                className="flex-1 bg-black/60 border-white/10 text-white"
+                placeholder="Your Solana wallet address"
+              />
+              <GlowButton label={savingPayout ? 'Saving...' : 'Save'} onClick={savePayoutWallet} disabled={savingPayout} />
+            </div>
+            {payoutMsg && <div className="text-xs mt-2 text-gray-300">{payoutMsg}</div>}
+          </div>
+        )}
 
         {/* Analytics Overview */}
         {creator && (

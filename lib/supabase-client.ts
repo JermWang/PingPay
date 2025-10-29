@@ -215,6 +215,18 @@ export async function getCreatorById(id: string): Promise<Creator | null> {
   return data
 }
 
+export async function updateCreatorPayoutWallet(creatorId: string, payoutWallet: string): Promise<Creator> {
+  if (!supabase) throw new Error("Supabase not configured")
+  const { data, error } = await supabase
+    .from("creators")
+    .update({ payout_wallet: payoutWallet, updated_at: new Date().toISOString() })
+    .eq("id", creatorId)
+    .select()
+    .single()
+  if (error) throw new Error(`Failed to update payout wallet: ${error.message}`)
+  return data
+}
+
 export async function createCreator(creator: Omit<Creator, "id" | "created_at" | "updated_at">): Promise<Creator> {
   if (!supabase) throw new Error("Supabase not configured")
   
