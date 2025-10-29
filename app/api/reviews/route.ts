@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { isUsingRealDatabase } from "@/lib/supabase-client"
 import * as SupabaseClient from "@/lib/supabase-client"
-import * as MockDatabase from "@/lib/supabase-mock"
 import { createReviewSchema, validateSchema, uuidSchema, sanitizeInput } from "@/lib/validations"
 import { rateLimit } from "@/lib/rate-limit"
-
-// Use real database if configured, otherwise use mock
-const db = isUsingRealDatabase ? SupabaseClient : MockDatabase
 
 // GET: Fetch reviews for a service
 export async function GET(request: NextRequest) {
@@ -26,7 +21,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid service ID", details: validation.errors }, { status: 400 })
     }
 
-    const reviews = await db.getReviewsByService(validation.data)
+    const reviews = await SupabaseClient.getReviewsByService(validation.data)
 
     return NextResponse.json({ reviews })
   } catch (error) {
@@ -61,7 +56,7 @@ export async function POST(request: NextRequest) {
     const sanitizedTitle = title ? sanitizeInput(title) : null
     const sanitizedContent = sanitizeInput(content)
 
-    const review = await db.createReview({
+    const review = await SupabaseClient.createReview({
       service_id,
       user_wallet,
       rating,

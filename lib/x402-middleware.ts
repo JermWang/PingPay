@@ -7,13 +7,11 @@ import {
   getQuoteId,
   isQuoteValid,
 } from "./x402"
-import { isUsingRealDatabase } from "./supabase-client"
 import * as SupabaseClient from "./supabase-client"
-import * as MockDatabase from "./supabase-mock"
 import { PAYMENT_RECEIVER_ADDRESS } from "./constants"
 
-// Use real database if configured, otherwise use mock
-const db = isUsingRealDatabase ? SupabaseClient : MockDatabase
+// Production: always use the real database
+const db = SupabaseClient
 
 /**
  * x402 middleware to protect API endpoints

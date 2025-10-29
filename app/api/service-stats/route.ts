@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { isUsingRealDatabase } from "@/lib/supabase-client"
 import * as SupabaseClient from "@/lib/supabase-client"
-import * as MockDatabase from "@/lib/supabase-mock"
-
-// Use real database if configured, otherwise use mock
-const db = isUsingRealDatabase ? SupabaseClient : MockDatabase
+import { uuidSchema } from "@/lib/validations"
 
 // GET: Fetch statistics for a service
 export async function GET(request: NextRequest) {
@@ -16,7 +12,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Service ID is required" }, { status: 400 })
     }
 
-    const stats = await db.getServiceStats(serviceId)
+    // Require a valid UUID in production
+    const isUuid = uuidSchema.safeParse(serviceId).success
+    if (!isUuid) {
+      return NextResponse.json({ error: "Invalid service ID format (UUID required)" }, { status: 400 })
+    }
+
+    const stats = await SupabaseClient.getServiceStats(serviceId)
 
     return NextResponse.json({ stats })
   } catch (error) {

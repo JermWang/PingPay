@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { isUsingRealDatabase } from "@/lib/supabase-client"
 import * as SupabaseClient from "@/lib/supabase-client"
-import * as MockDatabase from "@/lib/supabase-mock"
 import { creatorAuthSchema, validateSchema } from "@/lib/validations"
 import { rateLimit } from "@/lib/rate-limit"
-
-// Use real database if configured, otherwise use mock
-const db = isUsingRealDatabase ? SupabaseClient : MockDatabase
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,10 +22,10 @@ export async function POST(request: NextRequest) {
     const { walletAddress } = validation.data
 
     // Get existing creator or create new one
-    let creator = await db.getCreator(walletAddress)
+    let creator = await SupabaseClient.getCreator(walletAddress)
     
     if (!creator) {
-      creator = await db.createCreator({ wallet_address: walletAddress })
+      creator = await SupabaseClient.createCreator({ wallet_address: walletAddress })
     }
 
     return NextResponse.json({ creator })

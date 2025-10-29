@@ -1,72 +1,40 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { ServiceCard } from "@/components/marketplace/service-card"
 import type { Service, ServiceStats } from "@/lib/types"
 import type { FilterState } from "./marketplace-filters"
 
-// Mock data - in production this would fetch from Supabase
-const mockServices: Service[] = [
-  {
-    id: "1",
-    name: "Solana Balance Check",
-    description: "Get the SOL balance for any Solana wallet address",
-    endpoint: "/api/solana/balance",
-    price_usd: 0.01,
-    category: "Blockchain Data",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "Token Holdings",
-    description: "Retrieve all SPL token holdings for a wallet",
-    endpoint: "/api/solana/tokens",
-    price_usd: 0.02,
-    category: "Blockchain Data",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    name: "Transaction History",
-    description: "Fetch recent transaction history for any address",
-    endpoint: "/api/solana/transactions",
-    price_usd: 0.03,
-    category: "Blockchain Data",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    name: "NFT Metadata",
-    description: "Get detailed metadata for Solana NFTs",
-    endpoint: "/api/solana/nft",
-    price_usd: 0.05,
-    category: "NFT Data",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "5",
-    name: "Validator Info",
-    description: "Real-time validator performance metrics",
-    endpoint: "/api/solana/validator",
-    price_usd: 0.02,
-    category: "Network Data",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-]
+export function ServiceGrid({ filters }: ServiceGridProps) {
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const res = await fetch('/api/services')
+        if (!res.ok) throw new Error('Failed to load services')
+        const data = await res.json()
+        setServices(data.services || [])
+      } catch (e: any) {
+        setError(e?.message || 'Failed to load services')
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
 
 interface ServiceGridProps {
   filters: FilterState
 }
 
-export function ServiceGrid({ filters }: ServiceGridProps) {
   // Filter and sort services
   const filteredServices = useMemo(() => {
-    let result = [...mockServices]
+    let result = [...services]
 
     // Search filter
     if (filters.search) {
@@ -110,7 +78,7 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
     }
 
     return result
-  }, [filters])
+  }, [filters, services])
 
   return (
     <section>
@@ -121,7 +89,15 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
         </p>
       </div>
 
-      {filteredServices.length > 0 ? (
+      {error && (
+        <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-4 text-destructive bg-destructive/10 border border-destructive/20 mb-6">
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-gray-400">Loading services…</div>
+      ) : filteredServices.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServices.map((service) => (
             <ServiceCard key={service.id} service={service} />

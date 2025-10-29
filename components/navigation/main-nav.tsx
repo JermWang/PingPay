@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { cn } from "@/lib/utils"
@@ -15,6 +16,11 @@ const navItems = [
 
 export function MainNav() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-xl">
@@ -50,9 +56,13 @@ export function MainNav() {
             ))}
           </div>
 
-          {/* Wallet Connect Button */}
+          {/* Wallet Connect Button (client-only to avoid hydration mismatch) */}
           <div className="wallet-adapter-button-trigger">
-            <WalletMultiButton />
+            {mounted ? (
+              <WalletMultiButton />
+            ) : (
+              <div className="h-9 w-36 rounded-md bg-white/10" aria-hidden />
+            )}
           </div>
         </div>
       </div>

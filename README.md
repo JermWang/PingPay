@@ -1,119 +1,54 @@
-# Ping Pay (Micro402)
+# Ping Pay – Production
 
-A Solana-based micro-API marketplace using the x402 payment standard. Pay tiny amounts of USDC for instant API access.
+Solana‑powered, pay‑per‑request API marketplace using the x402 standard. Every protected request returns a 402 quote, you pay in USDC on Solana, then replay with the signature to unlock data.
 
-## Features
+## Production Setup
 
-- **x402 Payment Standard**: HTTP 402 Payment Required implementation
-- **Solana Micropayments**: Pay $0.01-$0.05 per API request with USDC
-- **Real-time Verification**: On-chain payment verification in under 1 second
-- **API Marketplace**: Browse and access multiple Solana data APIs
-- **Developer-Friendly**: Simple REST API with clear payment flow
-
-## Getting Started
-
-### Prerequisites
-
+### Requirements
 - Node.js 18+
-- Solana wallet with USDC (for testing)
-- Supabase account (optional, for production database)
+- Supabase project (PostgreSQL)
+- Solana RPC + payment receiver address (USDC)
 
-### Installation
+### 1) Install
+```bash
+pnpm install
+```
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables (see below)
-4. Run development server: `npm run dev`
-
-### Environment Variables
-
-\`\`\`env
-# Solana Configuration
+### 2) Configure env
+See `ENV_SETUP.md` for all variables. Minimum:
+```env
 NEXT_PUBLIC_SOLANA_NETWORK=devnet
 NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
-NEXT_PUBLIC_PAYMENT_RECEIVER_ADDRESS=YourSolanaAddressHere
+NEXT_PUBLIC_PAYMENT_RECEIVER_ADDRESS=YOUR_SOL_ADDRESS
+NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+```
 
-# Supabase (optional)
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-\`\`\`
+### 3) Database
+Run the SQL in `/scripts` (01, 02, 03, 04) on Supabase to create tables, seed services, and enable stats.
 
-## API Usage
+### 4) Run
+```bash
+pnpm dev                      # local
+pnpm build && pnpm start      # production
+```
 
-### 1. Request Protected Endpoint
+## x402 Flow (HTTP)
+1) Call protected endpoint → 402 with quote headers (amount, address, quote_id, expires)
+2) Pay USDC on Solana
+3) Replay request with `X-Quote-Id` and `X-Transaction-Signature`
+4) Server verifies on‑chain and returns data
 
-\`\`\`bash
-curl https://your-domain.com/api/solana/balance?address=DYw8...
-\`\`\`
+## Endpoints
+- `/api/solana/balance`
+- `/api/solana/tokens`
+- `/api/solana/transactions`
+- `/api/solana/nft`
+- `/api/solana/validator`
 
-### 2. Receive 402 Payment Required
-
-\`\`\`json
-{
-  "error": "Payment required",
-  "quote_id": "550e8400-e29b-41d4-a716-446655440000",
-  "amount_usd": 0.01,
-  "solana_address": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
-  "expires_at": "2025-01-27T12:35:00Z"
-}
-\`\`\`
-
-### 3. Send USDC Payment on Solana
-
-Transfer the specified amount to the provided address.
-
-### 4. Replay Request with Transaction Signature
-
-\`\`\`bash
-curl https://your-domain.com/api/solana/balance?address=DYw8... \
-  -H "X-Quote-Id: 550e8400-e29b-41d4-a716-446655440000" \
-  -H "X-Transaction-Signature: 5Kj8x..."
-\`\`\`
-
-### 5. Receive Protected Data
-
-\`\`\`json
-{
-  "success": true,
-  "data": {
-    "address": "DYw8...",
-    "balance": 1.234,
-    "unit": "SOL"
-  }
-}
-\`\`\`
-
-## Available APIs
-
-- **Balance Check** ($0.01): Get SOL balance for any address
-- **Token Holdings** ($0.02): Retrieve all SPL tokens
-- **Transaction History** ($0.03): Fetch recent transactions
-- **NFT Metadata** ($0.05): Get NFT details
-- **Validator Info** ($0.02): Real-time validator metrics
-
-## Database Setup
-
-Run the SQL scripts in the `/scripts` folder to set up your Supabase database:
-
-1. `01-create-tables.sql` - Creates all necessary tables
-2. `02-seed-services.sql` - Seeds example API services
-
-## Tech Stack
-
-- **Frontend**: Next.js 16, React 19, Tailwind CSS v4
-- **Backend**: Next.js API Routes, Server Actions
-- **Blockchain**: Solana, USDC
-- **Database**: Supabase (PostgreSQL)
-- **Deployment**: Vercel
-
-## Development
-
-The project uses mock Supabase functions for development. To connect a real database:
-
-1. Add Supabase integration in v0
-2. Replace mock functions in `lib/supabase-mock.ts` with real Supabase client calls
-3. Run database migration scripts
+## Notes
+- All mock/dev code has been removed. The app uses Supabase exclusively in production.
+- Marketplace services load from Supabase via `/api/services`.
 
 ## License
-
 MIT

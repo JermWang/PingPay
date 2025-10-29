@@ -47,9 +47,8 @@ export function ParticleBackground() {
     let animationId: number
 
     const animate = () => {
-      // Clear frame fully to REMOVE trails
-      ctx.fillStyle = "#000"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Clear fully to remove trails but keep canvas transparent over content
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       particles.forEach((particle) => {
         particle.x += particle.vx
@@ -81,11 +80,11 @@ export function ParticleBackground() {
     }
   }, [])
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-    />
-  )
+      return (
+        <canvas
+          ref={canvasRef}
+          className="fixed inset-0 pointer-events-none z-5"
+        />
+      )
 }
 

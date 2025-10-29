@@ -6,6 +6,7 @@ import Link from "next/link"
 import { GlowButton } from "@/components/shared/GlowButton"
 import { NeonText } from "@/components/shared/NeonText"
 import dynamic from "next/dynamic"
+import { ParticleBackground } from "@/components/shared/particle-background"
 
 // Temporarily using simple version to debug WebGL context issue
 const Hero3DScene = dynamic(
@@ -19,6 +20,13 @@ const Hero3DScene = dynamic(
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const handleScrollToHowItWorks = () => {
+    const target = document.getElementById("how-it-works")
+    if (!target) return
+    const navOffset = 72 // fixed navbar height compensation
+    const y = target.getBoundingClientRect().top + window.scrollY - navOffset
+    window.scrollTo({ top: y, behavior: "smooth" })
+  }
 
   // Calculate scroll progress for 3D animation
   useEffect(() => {
@@ -114,6 +122,8 @@ export function Hero() {
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Hero3DScene scrollProgress={scrollProgress} />
       </div>
+      {/* Local particle layer to ensure visibility above 3D on landing page */}
+      <ParticleBackground />
 
       <div className="container mx-auto min-h-[88vh] md:min-h-screen grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8 px-4 relative z-10">
         <div className="md:col-span-5 text-center md:text-left">
@@ -143,11 +153,9 @@ export function Hero() {
                 Creators Marketplace
               </GlowButton>
             </Link>
-            <a href="#how-it-works">
-              <GlowButton label="How It Works" className="text-lg px-8 py-4 w-full sm:w-auto">
-                How It Works
-              </GlowButton>
-            </a>
+            <GlowButton onClick={handleScrollToHowItWorks} label="How It Works" className="text-lg px-8 py-4 w-full sm:w-auto">
+              How It Works
+            </GlowButton>
           </div>
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">

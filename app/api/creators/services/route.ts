@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { isUsingRealDatabase } from "@/lib/supabase-client"
 import * as SupabaseClient from "@/lib/supabase-client"
-import * as MockDatabase from "@/lib/supabase-mock"
 import { createServiceSchema, updateServiceSchema, deleteServiceSchema, validateSchema, uuidSchema } from "@/lib/validations"
 import { rateLimit } from "@/lib/rate-limit"
-
-// Use real database if configured, otherwise use mock
-const db = isUsingRealDatabase ? SupabaseClient : MockDatabase
 
 // GET: Fetch creator's services
 export async function GET(request: NextRequest) {
@@ -26,7 +21,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid creator ID", details: validation.errors }, { status: 400 })
     }
 
-    const services = await db.getServicesByCreator(validation.data)
+    const services = await SupabaseClient.getServicesByCreator(validation.data)
 
     return NextResponse.json({ services })
   } catch (error) {
@@ -63,7 +58,7 @@ export async function POST(request: NextRequest) {
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "")}`
 
-    const service = await db.createService({
+    const service = await SupabaseClient.createService({
       name,
       description,
       endpoint,
@@ -104,7 +99,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const { serviceId, ...updates } = validation.data
-    const service = await db.updateService(serviceId, updates)
+    const service = await SupabaseClient.updateService(serviceId, updates)
 
     if (!service) {
       return NextResponse.json({ error: "Service not found" }, { status: 404 })
@@ -138,7 +133,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid service ID", details: validation.errors }, { status: 400 })
     }
 
-    await db.deleteService(validation.data)
+    await SupabaseClient.deleteService(validation.data)
 
     return NextResponse.json({ success: true })
   } catch (error) {
