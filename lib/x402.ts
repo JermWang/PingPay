@@ -144,6 +144,23 @@ export async function verifyTransaction(
     // Check pre and post token balances to verify USDC transfer
     const preBalances = transaction.meta?.preTokenBalances || []
     const postBalances = transaction.meta?.postTokenBalances || []
+
+    // Build account key list to resolve token account addresses for balances
+    const txAny: any = transaction.transaction
+    const legacyKeys: any[] = txAny?.message?.accountKeys || []
+    const v0Keys: any[] = txAny?.message?.staticAccountKeys || []
+    let accountKeysResolved: string[] = []
+    if (legacyKeys.length) {
+      accountKeysResolved = legacyKeys.map((k: any) => (k?.toBase58?.() || k?.pubkey?.toBase58?.() || String(k)))
+    } else if (v0Keys.length) {
+      accountKeysResolved = v0Keys.map((k: any) => (k?.toBase58?.() || k?.pubkey?.toBase58?.() || String(k)))
+    } else if (typeof txAny?.message?.getAccountKeys === "function") {
+      try {
+        const ak = txAny.message.getAccountKeys({ allowLookup: true })
+        const statics: any[] = ak?.staticAccountKeys || []
+        accountKeysResolved = statics.map((k: any) => (k?.toBase58?.() || String(k)))
+      } catch {}
+    }
     
     // Find USDC transfers to the recipient
     let transferFound = false
@@ -156,7 +173,12 @@ export async function verifyTransaction(
       
       if (
         postBalance.mint === usdcMintPubkey.toBase58() &&
-        postBalance.owner === recipientPubkey.toBase58()
+        (
+          // Owner equals our recipient wallet
+          postBalance.owner === recipientPubkey.toBase58() ||
+          // OR the token account itself equals expected recipient (if env is set to ATA)
+          accountKeysResolved[postBalance.accountIndex] === recipientPubkey.toBase58()
+        )
       ) {
         const preAmount = Number(preBalance?.uiTokenAmount.amount || 0)
         const postAmount = Number(postBalance.uiTokenAmount.amount || 0)
