@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js"
-import { getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token"
+import { getAssociatedTokenAddress, createTransferInstruction, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
 import { GlowButton } from "@/components/shared/GlowButton"
 import type { Service } from "@/lib/types"
@@ -152,10 +152,36 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         // USDC Transfer
         const senderTokenAccount = await getAssociatedTokenAddress(USDC_MINT, publicKey)
         const recipientTokenAccount = await getAssociatedTokenAddress(USDC_MINT, recipientPubkey)
-        
+
+        const senderInfo = await connection.getAccountInfo(senderTokenAccount)
+        const recipientInfo = await connection.getAccountInfo(recipientTokenAccount)
+
         const amountInDecimals = Math.floor(quote.amountUsd * 1_000_000) // USDC has 6 decimals
 
-        const transaction = new Transaction().add(
+        const transaction = new Transaction()
+        // Ensure ATAs exist (payer will fund creation if missing)
+        if (!senderInfo) {
+          transaction.add(
+            createAssociatedTokenAccountInstruction(
+              publicKey,
+              senderTokenAccount,
+              publicKey,
+              USDC_MINT
+            )
+          )
+        }
+        if (!recipientInfo) {
+          transaction.add(
+            createAssociatedTokenAccountInstruction(
+              publicKey,
+              recipientTokenAccount,
+              recipientPubkey,
+              USDC_MINT
+            )
+          )
+        }
+
+        transaction.add(
           createTransferInstruction(
             senderTokenAccount,
             recipientTokenAccount,
@@ -180,11 +206,14 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           description: "Waiting for confirmation...",
         })
 
-        await connection.confirmTransaction({
+        const conf = await connection.confirmTransaction({
           signature: txSignature,
           blockhash,
           lastValidBlockHeight
         }, 'confirmed')
+        if (conf?.value?.err) {
+          throw new Error(`On-chain error: ${JSON.stringify(conf.value.err)}`)
+        }
 
       } else {
         // SOL Transfer
@@ -220,6 +249,9 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         
         console.log('✅ Transaction Confirmed:', txSignature)
         console.log('Confirmation:', confirmation)
+        if (confirmation?.value?.err) {
+          throw new Error(`On-chain error: ${JSON.stringify(confirmation.value.err)}`)
+        }
       }
 
       toast({
