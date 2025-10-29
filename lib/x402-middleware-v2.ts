@@ -132,7 +132,110 @@ async function handleApiKeyAuth(
 }
 
 /**
+ * Handle wallet-connected payment flow
+ * User has wallet connected and can pay directly without manual tx signature
+ */
+async function handleWalletAuth(
+  request: NextRequest,
+  handler: (request: NextRequest) => Promise<Response>,
+  service: any,
+  endpoint: string,
+  walletAddress: string
+) {
+  // Check if user has account with balance
+  const userAccount = await getUserAccount(walletAddress)
+  
+  // Check for payment signature (from wallet approval)
+  const paymentSignature = request.headers.get("X-Payment-Signature")
+  
+  if (userAccount && await hasBalance(walletAddress, service.price_usd)) {
+    // User has balance, deduct and proceed (like API key flow)
+    const response = await handler(request)
+    
+    if (response.status >= 200 && response.status < 300) {
+      try {
+        await deductBalance(
+          walletAddress,
+          service.price_usd,
+          service.id,
+          undefined,
+          `Wallet payment: ${endpoint}`
+        )
+        
+        if (service.creator_id) {
+          await trackCreatorEarning(service.creator_id, service.price_usd)
+        }
+        
+        await db.logUsage(service.id, null, endpoint, response.status)
+      } catch (error) {
+        console.error("[x402-v2] Failed to process wallet payment:", error)
+      }
+    }
+    
+    return response
+  }
+  
+  // User doesn't have balance - need direct payment
+  if (!paymentSignature) {
+    // Generate quote and return 402
+    const quote = await generateQuote(service.id, service.price_usd)
+    quote.wallet_address = walletAddress // Associate quote with wallet
+    await db.createQuote(quote)
+    
+    const response = create402Response(quote)
+    return new Response(response.body, {
+      ...response,
+      headers: {
+        ...Object.fromEntries(response.headers.entries()),
+        "X-Wallet-Payment-Required": "true", // Signal that wallet can pay directly
+      },
+    })
+  }
+  
+  // User provided payment signature - verify and process
+  const quoteId = getQuoteId(request)
+  if (!quoteId) {
+    return NextResponse.json({ error: "Quote ID required" }, { status: 400 })
+  }
+  
+  const quote = await db.getQuote(quoteId)
+  if (!quote || !isQuoteValid(quote)) {
+    return NextResponse.json({ error: "Invalid or expired quote" }, { status: 400 })
+  }
+  
+  // Verify the payment signature
+  const isValid = await verifyTransaction(paymentSignature, quote.amount_usd, PAYMENT_RECEIVER_ADDRESS)
+  
+  if (!isValid) {
+    return NextResponse.json({ error: "Payment verification failed" }, { status: 403 })
+  }
+  
+  // Create payment record
+  const payment = await db.createPayment({
+    quote_id: quoteId,
+    transaction_signature: paymentSignature,
+    verified: true,
+  })
+  
+  // Process request
+  const response = await handler(request)
+  
+  if (service.creator_id && response.status >= 200 && response.status < 300) {
+    try {
+      await trackCreatorEarning(service.creator_id, quote.amount_usd)
+    } catch (error) {
+      console.error("[x402-v2] Failed to track creator earning:", error)
+    }
+  }
+  
+  await db.logUsage(service.id, payment.id, endpoint, response.status)
+  
+  return response
+}
+
+/**
  * Handle x402 payment flow (original implementation)
+ * Now supports both wallet signature and transaction signature payment methods
  */
 async function handleX402Auth(
   request: NextRequest,
@@ -140,6 +243,14 @@ async function handleX402Auth(
   service: any,
   endpoint: string
 ) {
+  // Check for wallet address (for direct connected wallet payments)
+  const walletAddress = request.headers.get("X-Wallet-Address")
+  
+  // If wallet is connected, check if they have balance or existing account
+  if (walletAddress) {
+    return await handleWalletAuth(request, handler, service, endpoint, walletAddress)
+  }
+
   // Check for transaction signature in headers
   const transactionSignature = getTransactionSignature(request)
   const quoteId = getQuoteId(request)

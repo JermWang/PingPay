@@ -119,12 +119,12 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         </DialogHeader>
 
         <Tabs defaultValue="x402" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="x402" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-black/40 backdrop-blur-xl border border-white/20">
+            <TabsTrigger value="x402" className="flex items-center gap-2 data-[state=active]:bg-cyan-500/20 data-[state=active]:text-white text-white/60">
               <CreditCard className="w-4 h-4" />
               One-Time Payment
             </TabsTrigger>
-            <TabsTrigger value="api-key" className="flex items-center gap-2">
+            <TabsTrigger value="api-key" className="flex items-center gap-2 data-[state=active]:bg-cyan-500/20 data-[state=active]:text-white text-white/60">
               <Key className="w-4 h-4" />
               With API Key
             </TabsTrigger>
