@@ -212,19 +212,29 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           description: "Waiting for confirmation...",
         })
 
-        await connection.confirmTransaction({
+        const confirmation = await connection.confirmTransaction({
           signature: txSignature,
           blockhash,
           lastValidBlockHeight
         }, 'confirmed')
+        
+        console.log('✅ Transaction Confirmed:', txSignature)
+        console.log('Confirmation:', confirmation)
       }
 
+      toast({
+        title: "Transaction Confirmed!",
+        description: "Verifying payment with API...",
+      })
+
       // Now verify with the API
+      console.log('🔍 Verifying with API. Quote ID:', quote.quoteId, 'Signature:', txSignature)
       setSignature(txSignature)
       await verifyWithSignature(txSignature, quote.quoteId)
 
     } catch (e: any) {
-      console.error('Payment error:', e)
+      console.error('❌ Payment error:', e)
+      console.error('Error stack:', e.stack)
       setError(e?.message || "Payment failed")
       toast({
         title: "Payment Failed",
@@ -240,21 +250,31 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
     const useSignature = txSig || signature
     const useQuote = quoteIdOverride || quote?.quoteId
     
-    if (!useQuote || !useSignature) return
+    if (!useQuote || !useSignature) {
+      console.error('❌ Missing quote or signature:', { useQuote, useSignature })
+      return
+    }
     
     try {
       setLoading(true)
       setError(null)
 
-      const res = await fetch(buildUrl(), {
+      const url = buildUrl()
+      console.log('📡 Verifying payment:', { url, quoteId: useQuote, signature: useSignature })
+
+      const res = await fetch(url, {
         method: "GET",
         headers: {
           "X-Quote-Id": useQuote,
           "X-Transaction-Signature": useSignature,
         },
       })
+      
+      console.log('📥 API Response Status:', res.status)
+      
       if (res.ok) {
         const data = await res.json()
+        console.log('✅ Payment Verified! Data received:', data)
         setResult(data)
         setQuote(null)
         
@@ -368,10 +388,23 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         })
       } else {
         const data = await res.json().catch(() => ({}))
-        setError(data.error || `Verification failed (${res.status})`)
+        const errorMsg = data.error || `Verification failed (${res.status})`
+        console.error('❌ Verification failed:', errorMsg, data)
+        setError(errorMsg)
+        toast({
+          title: "Verification Failed",
+          description: errorMsg,
+          variant: "destructive"
+        })
       }
     } catch (e: any) {
+      console.error('❌ Verification error:', e)
       setError(e?.message || "Verification failed")
+      toast({
+        title: "Verification Error",
+        description: e?.message || "Verification failed",
+        variant: "destructive"
+      })
     } finally {
       setLoading(false)
     }
