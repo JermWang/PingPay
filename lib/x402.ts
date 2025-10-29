@@ -70,10 +70,15 @@ export async function verifyTransaction(
   expectedAmountUsd: number,
   expectedRecipient: string,
 ): Promise<boolean> {
+  console.log("[x402] ======== VERIFICATION START ========")
+  console.log("[x402] Signature:", transactionSignature)
+  console.log("[x402] Expected Amount USD:", expectedAmountUsd)
+  console.log("[x402] Expected Recipient:", expectedRecipient)
+  
   try {
     // Validate signature format
     if (!transactionSignature || transactionSignature.length < 32) {
-      console.error("[x402] Invalid transaction signature format")
+      console.error("[x402] ❌ Invalid transaction signature format")
       return false
     }
 
@@ -85,6 +90,8 @@ export async function verifyTransaction(
       "https://solana-api.projectserum.com",
     ])).filter(Boolean)
 
+    console.log("[x402] Trying RPC endpoints:", rpcCandidates.length)
+
     let connection: Connection | null = null
     let usedRpc = ""
     for (const rpcUrl of rpcCandidates) {
@@ -93,29 +100,26 @@ export async function verifyTransaction(
         await conn.getLatestBlockhash("confirmed")
         connection = conn
         usedRpc = rpcUrl
+        console.log("[x402] ✅ Connected to RPC:", usedRpc)
         break
-      } catch {
+      } catch (err) {
+        console.log("[x402] ❌ RPC failed:", rpcUrl, err)
         continue
       }
     }
     if (!connection) {
-      console.error("[x402] No working RPC endpoint found")
+      console.error("[x402] ❌ No working RPC endpoint found")
       return false
     }
-    
-    console.log("[x402] Verifying transaction:", {
-      signature: transactionSignature,
-      expectedAmountUsd,
-      expectedRecipient,
-      rpcUrl: usedRpc,
-    })
 
     // Fetch transaction details
+    console.log("[x402] Fetching transaction from chain...")
     let transaction = await connection.getTransaction(transactionSignature, {
       commitment: "confirmed",
       maxSupportedTransactionVersion: 0,
     })
     if (!transaction) {
+      console.log("[x402] Not found at 'confirmed', trying 'finalized'...")
       // Try again at higher commitment
       transaction = await connection.getTransaction(transactionSignature, {
         commitment: "finalized",
@@ -124,26 +128,33 @@ export async function verifyTransaction(
     }
 
     if (!transaction) {
-      console.error("[x402] Transaction not found on-chain")
+      console.error("[x402] ❌ Transaction not found on-chain")
       return false
     }
+
+    console.log("[x402] ✅ Transaction found on-chain")
 
     // Check if transaction was successful
     if (transaction.meta?.err) {
-      console.error("[x402] Transaction failed on-chain:", transaction.meta.err)
+      console.error("[x402] ❌ Transaction failed on-chain:", transaction.meta.err)
       return false
     }
 
+    console.log("[x402] ✅ Transaction succeeded on-chain")
+
     // Parse transaction to find USDC transfer
+    console.log("[x402] Checking for USDC transfer...")
     const recipientPubkey = new PublicKey(expectedRecipient)
     const usdcMintPubkey = new PublicKey(USDC_MINT_ADDRESS)
     
     // Convert USD amount to USDC lamports (USDC has 6 decimals)
     const expectedLamports = Math.floor(expectedAmountUsd * Math.pow(10, USDC_DECIMALS))
+    console.log("[x402] Expected USDC lamports:", expectedLamports)
     
     // Check pre and post token balances to verify USDC transfer
     const preBalances = transaction.meta?.preTokenBalances || []
     const postBalances = transaction.meta?.postTokenBalances || []
+    console.log("[x402] Token balances - pre:", preBalances.length, "post:", postBalances.length)
 
     // Build account key list to resolve token account addresses for balances
     const txAny: any = transaction.transaction
@@ -161,6 +172,7 @@ export async function verifyTransaction(
         accountKeysResolved = statics.map((k: any) => (k?.toBase58?.() || String(k)))
       } catch {}
     }
+    console.log("[x402] Account keys resolved:", accountKeysResolved.length)
     
     // Find USDC transfers to the recipient
     let transferFound = false
@@ -170,6 +182,13 @@ export async function verifyTransaction(
       const preBalance = preBalances.find(
         (pb) => pb.accountIndex === postBalance.accountIndex
       )
+      
+      console.log("[x402] Checking token balance:", {
+        mint: postBalance.mint,
+        owner: postBalance.owner,
+        accountIndex: postBalance.accountIndex,
+        account: accountKeysResolved[postBalance.accountIndex]
+      })
       
       if (
         postBalance.mint === usdcMintPubkey.toBase58() &&
@@ -183,6 +202,12 @@ export async function verifyTransaction(
         const preAmount = Number(preBalance?.uiTokenAmount.amount || 0)
         const postAmount = Number(postBalance.uiTokenAmount.amount || 0)
         const amountTransferred = postAmount - preAmount
+        
+        console.log("[x402] USDC transfer candidate found:", {
+          preAmount,
+          postAmount,
+          amountTransferred
+        })
         
         if (amountTransferred > 0) {
           transferFound = true
@@ -198,20 +223,20 @@ export async function verifyTransaction(
       const amountDiff = Math.abs(transferAmount - expectedLamports)
       
       if (amountDiff > tolerance) {
-        console.error("[x402] USDC amount mismatch:", {
+        console.error("[x402] ❌ USDC amount mismatch:", {
           expected: expectedLamports,
           actual: transferAmount,
           diff: amountDiff,
           tolerance,
         })
       } else {
-        console.log("[x402] USDC transaction verified successfully:", {
-          signature: transactionSignature,
-          amount: transferAmount,
-          expectedAmount: expectedLamports,
-        })
+        console.log("[x402] ✅✅✅ USDC transaction verified successfully!")
+        console.log("[x402] Amount:", transferAmount, "Expected:", expectedLamports)
+        console.log("[x402] ======== VERIFICATION END (SUCCESS) ========")
         return true
       }
+    } else {
+      console.log("[x402] No USDC transfer found, checking SOL fallback...")
     }
 
     // Fallback: verify native SOL transfer to recipient
@@ -233,51 +258,65 @@ export async function verifyTransaction(
         } catch {}
       }
 
+      console.log("[x402] SOL verification - account keys:", accountKeys.length)
       const recipientIndex = accountKeys.findIndex((k) => k === recipientPubkey.toBase58())
       if (recipientIndex === -1) {
-        console.error("[x402] Recipient account not found in transaction account keys (SOL path)")
+        console.error("[x402] ❌ Recipient account not found in transaction account keys (SOL path)")
+        console.log("[x402] Looking for:", recipientPubkey.toBase58())
+        console.log("[x402] ======== VERIFICATION END (FAILED) ========")
         return false
       }
 
+      console.log("[x402] SOL recipient found at index:", recipientIndex)
       const preLamports = transaction.meta?.preBalances?.[recipientIndex] ?? 0
       const postLamports = transaction.meta?.postBalances?.[recipientIndex] ?? 0
       const lamportsReceived = postLamports - preLamports
 
+      console.log("[x402] SOL balance change:", {
+        pre: preLamports,
+        post: postLamports,
+        received: lamportsReceived
+      })
+
       if (lamportsReceived <= 0) {
-        console.error("[x402] No SOL received by recipient in this transaction")
+        console.error("[x402] ❌ No SOL received by recipient in this transaction")
+        console.log("[x402] ======== VERIFICATION END (FAILED) ========")
         return false
       }
 
+      console.log("[x402] Fetching live SOL price...")
       const solUsd = await fetchSolUsdPrice()
+      console.log("[x402] Live SOL price: $", solUsd)
+      
       const expectedSolLamports = Math.floor((expectedAmountUsd / solUsd) * LAMPORTS_PER_SOL)
       // Allow 2% tolerance or minimum 5k lamports (~0.000005 SOL)
       const solTolerance = Math.max(5000, Math.floor(expectedSolLamports * 0.02))
       const solDiff = Math.abs(lamportsReceived - expectedSolLamports)
 
+      console.log("[x402] SOL amount check:", {
+        expected: expectedSolLamports,
+        actual: lamportsReceived,
+        diff: solDiff,
+        tolerance: solTolerance
+      })
+
       if (solDiff > solTolerance) {
-        console.error("[x402] SOL amount mismatch:", {
-          expected: expectedSolLamports,
-          actual: lamportsReceived,
-          diff: solDiff,
-          tolerance: solTolerance,
-          solUsd,
-        })
+        console.error("[x402] ❌ SOL amount mismatch - outside tolerance")
+        console.log("[x402] ======== VERIFICATION END (FAILED) ========")
         return false
       }
 
-      console.log("[x402] SOL transaction verified successfully:", {
-        signature: transactionSignature,
-        amountLamports: lamportsReceived,
-        expectedLamports: expectedSolLamports,
-        solUsd,
-      })
+      console.log("[x402] ✅✅✅ SOL transaction verified successfully!")
+      console.log("[x402] ======== VERIFICATION END (SUCCESS) ========")
       return true
     } catch (e) {
-      console.error("[x402] SOL verification path failed:", e)
+      console.error("[x402] ❌ SOL verification path failed:", e)
+      console.log("[x402] ======== VERIFICATION END (FAILED) ========")
       return false
     }
   } catch (error) {
-    console.error("[x402] Transaction verification failed:", error)
+    console.error("[x402] ❌ Transaction verification failed:", error)
+    console.log("[x402] ======== VERIFICATION END (FAILED) ========")
     return false
   }
 }
