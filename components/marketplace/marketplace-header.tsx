@@ -1,42 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, TrendingUp, Zap, Shield, Users, DollarSign } from "lucide-react"
+import { ArrowLeft, TrendingUp, Zap, Users, DollarSign, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { usePlatformStats } from "@/hooks/use-platform-stats"
 
 export function MarketplaceHeader() {
-  const [stats, setStats] = useState({
-    totalAPIs: 0,
-    totalCalls: 0,
-    activeCreators: 0,
-    avgPrice: 0
-  })
-
-  useEffect(() => {
-    // Load marketplace stats
-    const loadStats = async () => {
-      try {
-        const res = await fetch('/api/services')
-        if (res.ok) {
-          const data = await res.json()
-          const services = data.services || []
-          setStats({
-            totalAPIs: services.length,
-            totalCalls: services.reduce((acc: number, s: any) => acc + (s.total_calls || 0), 0),
-            activeCreators: new Set(services.map((s: any) => s.creator_id)).size,
-            avgPrice: services.length > 0 
-              ? services.reduce((acc: number, s: any) => acc + s.price_usd, 0) / services.length 
-              : 0
-          })
-        }
-      } catch (error) {
-        console.error("Failed to load marketplace stats:", error)
-      }
-    }
-    loadStats()
-  }, [])
+  // Use universal platform stats hook (refreshes every 30s)
+  const { stats } = usePlatformStats(30000)
 
   return (
     <header className="relative">

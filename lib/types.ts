@@ -22,6 +22,7 @@ export interface Service {
   featured?: boolean
   verified?: boolean
   total_users?: number
+  total_calls?: number
   created_at: string
   updated_at: string
 }

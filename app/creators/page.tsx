@@ -61,11 +61,11 @@ export default function CreatorsPage() {
     setServices(services.filter((s) => s.id !== serviceId))
   }
 
-  // Calculate analytics
-  const totalRequests = services.reduce((acc, s) => acc + 0, 0) // Mock: would be real data
-  const totalRevenue = services.reduce((acc, s) => acc + 0, 0) // Mock: would be real data
-  const avgResponseTime = 0.12 // Mock: would be real data in seconds
-  const totalUsers = 0 // Mock: unique users who've called your APIs
+  // Calculate analytics from actual service data
+  const totalRequests = services.reduce((acc, s) => acc + (s.total_calls || 0), 0)
+  const totalRevenue = services.reduce((acc, s) => acc + ((s.total_calls || 0) * s.price_usd), 0)
+  const avgResponseTime = 0.12 // This would need backend tracking
+  const totalUsers = services.reduce((acc, s) => acc + (s.total_users || 0), 0)
 
   if (!connected) {
     return (

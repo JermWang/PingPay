@@ -7,6 +7,7 @@ import { GlowButton } from "@/components/shared/GlowButton"
 import { NeonText } from "@/components/shared/NeonText"
 import dynamic from "next/dynamic"
 import { ParticleBackground } from "@/components/shared/particle-background"
+import { usePlatformStats } from "@/hooks/use-platform-stats"
 
 // Temporarily using simple version to debug WebGL context issue
 const Hero3DScene = dynamic(
@@ -21,11 +22,9 @@ export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [copied, setCopied] = useState(false)
-  const [stats, setStats] = useState({
-    minPrice: 0.01,
-    apiCount: 0,
-    totalRequests: 37
-  })
+  
+  // Use universal platform stats hook (refreshes every 30s)
+  const { stats: platformStats } = usePlatformStats(30000)
   
   const TOKEN_ADDRESS = "COMING SOON"
   const TOKEN_ADDRESS_SHORT = TOKEN_ADDRESS
@@ -44,54 +43,7 @@ export function Hero() {
     window.scrollTo({ top: y, behavior: "smooth" })
   }
 
-  // Load dynamic stats
-  useEffect(() => {
-    const loadStats = async () => {
-      try {
-        const res = await fetch('/api/services')
-        if (res.ok) {
-          const data = await res.json()
-          const services = data.services || []
-          
-          // Calculate minimum price from all services
-          const minPrice = services.length > 0
-            ? Math.min(...services.map((s: any) => s.price_usd))
-            : 0.01
-          
-          setStats(prev => ({
-            ...prev,
-            minPrice,
-            apiCount: services.length
-          }))
-        }
-      } catch (error) {
-        console.error("Failed to load stats:", error)
-      }
-    }
-    loadStats()
-
-    // Poll for request count updates every 5 seconds
-    const loadRequestCount = async () => {
-      try {
-        const res = await fetch('/api/service-stats')
-        if (res.ok) {
-          const data = await res.json()
-          const totalRequests = data.stats?.reduce((sum: number, stat: any) => sum + (stat.request_count || 0), 0) || 0
-          setStats(prev => ({
-            ...prev,
-            totalRequests
-          }))
-        }
-      } catch (error) {
-        console.error("Failed to load request count:", error)
-      }
-    }
-    
-    loadRequestCount()
-    const interval = setInterval(loadRequestCount, 5000) // Update every 5 seconds
-    
-    return () => clearInterval(interval)
-  }, [])
+  // Platform stats are now automatically loaded and refreshed by the hook
 
   // Calculate scroll progress for 3D animation
   useEffect(() => {
@@ -235,7 +187,7 @@ export function Hero() {
           <div className="mt-8 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
-                ${stats.minPrice.toFixed(2)}
+                ${platformStats.minPrice.toFixed(3)}
               </div>
               <div className="text-xs md:text-sm text-white/80">Starting price</div>
             </div>
@@ -245,16 +197,16 @@ export function Hero() {
             </div>
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
-                {stats.apiCount}+
+                {platformStats.totalAPIs}+
               </div>
               <div className="text-xs md:text-sm text-white/80">APIs</div>
             </div>
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl relative overflow-hidden">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2 transition-all duration-300">
-                {stats.totalRequests.toLocaleString()}
+                {platformStats.totalRequests.toLocaleString()}
               </div>
               <div className="text-xs md:text-sm text-white/80">Total Requests</div>
-              {stats.totalRequests > 0 && (
+              {platformStats.totalRequests > 0 && (
                 <div className="absolute inset-0 bg-primary/10 animate-pulse pointer-events-none" />
               )}
             </div>
