@@ -181,7 +181,7 @@ export function Hero() {
             </span>
           </button>
 
-          <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold mb-3 md:mb-6 text-balance leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-6xl font-bold mb-3 md:mb-6 text-balance leading-tight">
             <span>Pay-Per-Request APIs</span>
             <br />
             <NeonText>Powered by Solana</NeonText>
