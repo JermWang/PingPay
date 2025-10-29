@@ -141,6 +141,14 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
   const handleWalletPayment = async () => {
     if (!publicKey || !quote || !sendTransaction) return
+    if (paymentMethod === 'usdc') {
+      toast({
+        title: "USDC wallet payments not supported",
+        description: "Wallet payments are SOL-only. Use manual signature or API key for USDC.",
+        variant: "destructive"
+      })
+      return
+    }
     
     try {
       setLoading(true)
@@ -152,67 +160,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
       let txSignature: string
 
-      if ((quote.asset || 'USDC') === 'USDC' && paymentMethod === 'usdc') {
-        // USDC Transfer
-        const senderTokenAccount = await getAssociatedTokenAddress(USDC_MINT, publicKey)
-        const recipientTokenAccount = quote.tokenAccount
-          ? new PublicKey(quote.tokenAccount)
-          : await getAssociatedTokenAddress(USDC_MINT, recipientPubkey)
-
-        const senderInfo = await connection.getAccountInfo(senderTokenAccount)
-        const recipientInfo = await connection.getAccountInfo(recipientTokenAccount)
-
-        const amountInDecimals = Math.floor(quote.amountUsd * 1_000_000) // USDC has 6 decimals
-
-        const transaction = new Transaction()
-        // Ensure ATAs exist (payer will fund creation if missing)
-        if (!senderInfo) {
-          transaction.add(
-            createAssociatedTokenAccountInstruction(
-              publicKey,
-              senderTokenAccount,
-              publicKey,
-              USDC_MINT
-            )
-          )
-        }
-        // Do not create receiver ATA; assume server provided valid token account
-
-        transaction.add(
-          createTransferInstruction(
-            senderTokenAccount,
-            recipientTokenAccount,
-            publicKey,
-            amountInDecimals,
-            [],
-            TOKEN_PROGRAM_ID
-          )
-        )
-
-        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('finalized')
-        transaction.recentBlockhash = blockhash
-        transaction.feePayer = publicKey
-
-        txSignature = await sendTransaction(transaction, connection, {
-          skipPreflight: false,
-          preflightCommitment: 'confirmed'
-        })
-        
-        toast({
-          title: "Transaction Sent",
-          description: "Waiting for confirmation...",
-        })
-
-        const conf = await connection.confirmTransaction({
-          signature: txSignature,
-          blockhash,
-          lastValidBlockHeight
-        }, 'confirmed')
-        if (conf?.value?.err) {
-          throw new Error(`On-chain error: ${JSON.stringify(conf.value.err)}`)
-        }
-
-      } else {
+      {
         // SOL Transfer
         const amountInLamports = Math.floor((quote.amountUsd / solPrice) * LAMPORTS_PER_SOL)
 
@@ -607,11 +555,17 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                   </div>
                   
                   <GlowButton 
-                    label={loading ? "Processing Payment..." : `💳 Pay ${paymentMethod === 'usdc' ? quote.amountUsd.toFixed(4) + ' USDC' : (solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...') + ' SOL'} with Connected Wallet`}
+                    label={loading ? "Processing Payment..." : `💳 Pay ${(solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...')} SOL with Connected Wallet`}
                     onClick={handleWalletPayment}
-                    disabled={loading || (paymentMethod === 'sol' && solPrice <= 0)}
+                    disabled={loading || solPrice <= 0 || paymentMethod === 'usdc'}
                     className="w-full"
                   />
+
+                  {paymentMethod === 'usdc' && (
+                    <div className="text-xs text-yellow-300">
+                      Wallet payments are SOL-only. Use the manual flow below or API keys for USDC.
+                    </div>
+                  )}
 
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
