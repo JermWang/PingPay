@@ -38,19 +38,31 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
   const [paymentMethod, setPaymentMethod] = React.useState<'usdc' | 'sol'>('usdc')
   const [solPrice, setSolPrice] = React.useState<number>(0)
 
-  // Fetch SOL price on mount
+  // Fetch SOL price on mount and refresh every 30 seconds
   React.useEffect(() => {
     async function fetchSolPrice() {
       try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd')
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+          cache: 'no-store'
+        })
+        if (!res.ok) throw new Error('Failed to fetch SOL price')
         const data = await res.json()
-        setSolPrice(data.solana?.usd || 100)
+        if (!data.solana?.usd) throw new Error('Invalid price data')
+        setSolPrice(data.solana.usd)
+        console.log('✅ Live SOL Price Updated:', data.solana.usd)
       } catch (err) {
-        setSolPrice(100) // Fallback price
+        console.error('❌ Failed to fetch live SOL price:', err)
+        toast({
+          title: "Price Error",
+          description: "Unable to fetch live SOL price. Please try again.",
+          variant: "destructive"
+        })
       }
     }
     fetchSolPrice()
-  }, [])
+    const interval = setInterval(fetchSolPrice, 30000) // Refresh every 30s
+    return () => clearInterval(interval)
+  }, [toast])
 
   const buildUrl = React.useCallback(() => {
     const url = service.endpoint
@@ -343,16 +355,19 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                       </div>
                     </button>
                     <button
-                      onClick={() => setPaymentMethod('sol')}
+                      onClick={() => solPrice > 0 && setPaymentMethod('sol')}
+                      disabled={solPrice <= 0}
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                         paymentMethod === 'sol'
                           ? 'bg-cyan-500/20 border-2 border-cyan-400 text-white'
+                          : solPrice <= 0
+                          ? 'bg-black/40 border border-white/20 text-white/30 cursor-not-allowed'
                           : 'bg-black/40 border border-white/20 text-white/60 hover:text-white'
                       }`}
                     >
                       ◎ SOL
                       <div className="text-xs mt-1 font-bold text-cyan-400">
-                        {solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...'} SOL
+                        {solPrice > 0 ? `${(quote.amountUsd / solPrice).toFixed(6)} SOL` : 'Loading price...'}
                       </div>
                     </button>
                   </div>
@@ -378,7 +393,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                   <GlowButton 
                     label={loading ? "Processing Payment..." : `💳 Pay ${paymentMethod === 'usdc' ? quote.amountUsd.toFixed(4) + ' USDC' : (solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...') + ' SOL'} with Connected Wallet`}
                     onClick={handleWalletPayment}
-                    disabled={loading}
+                    disabled={loading || (paymentMethod === 'sol' && solPrice <= 0)}
                     className="w-full"
                   />
 
