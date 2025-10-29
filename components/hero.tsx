@@ -135,7 +135,7 @@ export function Hero() {
       {/* Local particle layer to ensure visibility above 3D on landing page */}
       <ParticleBackground />
 
-      <div className="container mx-auto min-h-[88vh] md:min-h-screen grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8 px-4 relative z-10">
+      <div className="container mx-auto min-h-screen grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-8 px-4 relative z-10">
         <div className="md:col-span-5 text-center md:text-left">
           <button
             onClick={handleCopyToken}

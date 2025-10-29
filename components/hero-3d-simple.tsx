@@ -55,17 +55,18 @@ function SolanaModel({ scrollProgress }: { scrollProgress: number }) {
   const actionName = "solana logo"
   const durationRef = React.useRef(animations?.[0]?.duration || 5)
 
-  // Use the baked camera from the model
-  React.useEffect(() => {
-    if (gltf.cameras && gltf.cameras.length > 0) {
-      const bakedCamera = gltf.cameras[0]
-      console.log("[Model] Using baked camera:", bakedCamera.name)
-      modelCameraRef.current = bakedCamera
-      
-      // Replace the scene camera with the baked one
-      set({ camera: bakedCamera })
-    }
-  }, [gltf, set])
+  // Disabled baked camera to prevent mobile aspect ratio issues
+  // Using the responsive Canvas camera instead for proper mobile rendering
+  // React.useEffect(() => {
+  //   if (gltf.cameras && gltf.cameras.length > 0) {
+  //     const bakedCamera = gltf.cameras[0]
+  //     console.log("[Model] Using baked camera:", bakedCamera.name)
+  //     modelCameraRef.current = bakedCamera
+  //     
+  //     // Replace the scene camera with the baked one
+  //     set({ camera: bakedCamera })
+  //   }
+  // }, [gltf, set])
 
   React.useEffect(() => {
     if (!actionName) return
@@ -88,7 +89,7 @@ function SolanaModel({ scrollProgress }: { scrollProgress: number }) {
       mixer?.update(0)
     }
     
-    // The baked camera is part of the scene and will animate automatically
+    // Using standard camera animation based on scroll progress
   })
 
   React.useEffect(() => {
