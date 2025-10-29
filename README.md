@@ -96,7 +96,7 @@ For anonymous or one-off API calls:
 4. **Withdraw** - Request payouts (minimum $10)
 
 ## Notes
-- All mock/dev code has been removed. The app uses Supabase exclusively in production.
+- The app uses Supabase exclusively in production.
 - Marketplace services load from Supabase via `/api/services`.
 - Run SQL scripts in order (01-05) to set up all tables.
 
