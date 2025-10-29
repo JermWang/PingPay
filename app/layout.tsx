@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     "Pay-per-request APIs using the x402 payment standard on Solana. Pay tiny amounts of USDC for instant API access.",
   generator: "v0.app",
   icons: {
-    icon: "/logo-transparent-bg.png",
-    shortcut: "/logo-transparent-bg.png",
-    apple: "/logo-transparent-bg.png",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 }
 
