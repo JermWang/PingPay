@@ -7,6 +7,7 @@ import { GlowButton } from "@/components/shared/GlowButton"
 import { GlassPanel } from "@/components/shared/GlassPanel"
 import { ApiKeyCard } from "@/components/account/api-key-card"
 import { DepositModal } from "@/components/account/deposit-modal"
+import { WithdrawalModal } from "@/components/account/withdrawal-modal"
 import { 
   Wallet, 
   Key, 
@@ -15,7 +16,8 @@ import {
   TrendingUp, 
   Clock,
   DollarSign,
-  RefreshCw
+  RefreshCw,
+  ArrowDownToLine
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import type { ApiKey, AccountTransaction, UserAccount } from "@/lib/types"
@@ -177,11 +179,20 @@ export default function DashboardPage() {
               </div>
               <Wallet className="w-10 h-10 text-cyan-400/50" />
             </div>
-            <GlowButton
-              label="Add Funds"
-              onClick={() => setDepositOpen(true)}
-              className="w-full mt-4"
-            />
+            <div className="flex gap-2 mt-4">
+              <GlowButton
+                label="Add Funds"
+                onClick={() => setDepositOpen(true)}
+                className="flex-1"
+              />
+              {account && account.balance_usd >= 10 && (
+                <WithdrawalModal
+                  walletAddress={walletAddress!}
+                  currentBalance={account.balance_usd}
+                  onSuccess={fetchDashboardData}
+                />
+              )}
+            </div>
           </GlassPanel>
 
           <GlassPanel className="p-6">

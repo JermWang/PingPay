@@ -57,6 +57,17 @@ export async function depositFunds(
   if (!supabase) throw new Error("Supabase not configured")
   if (amountUsd <= 0) throw new Error("Deposit amount must be positive")
 
+  // Check if transaction was already processed
+  const { data: existingTx } = await supabase
+    .from("processed_transactions")
+    .select("*")
+    .eq("transaction_signature", transactionSignature)
+    .single()
+
+  if (existingTx) {
+    throw new Error("Transaction already processed - duplicate deposit attempt")
+  }
+
   // Get current account
   const account = await getUserAccount(walletAddress)
 
@@ -76,6 +87,16 @@ export async function depositFunds(
     .single()
 
   if (updateError) throw new Error(`Failed to deposit funds: ${updateError.message}`)
+
+  // Mark transaction as processed to prevent duplicates
+  await supabase
+    .from("processed_transactions")
+    .insert({
+      transaction_signature: transactionSignature,
+      wallet_address: walletAddress,
+      amount_usd: amountUsd,
+      transaction_type: "deposit",
+    })
 
   // Log transaction
   await logTransaction({
@@ -216,6 +237,154 @@ export async function getAccountTransactions(
 
   if (error) throw new Error(`Failed to get transactions: ${error.message}`)
   return data || []
+}
+
+/**
+ * Request a withdrawal
+ */
+export async function requestWithdrawal(
+  walletAddress: string,
+  amountUsd: number,
+  recipientAddress: string
+): Promise<any> {
+  if (!supabase) throw new Error("Supabase not configured")
+  if (amountUsd <= 0) throw new Error("Withdrawal amount must be positive")
+  if (amountUsd < 10) throw new Error("Minimum withdrawal amount is $10")
+
+  // Check sufficient balance
+  const account = await getUserAccount(walletAddress)
+  if (Number(account.balance_usd) < amountUsd) {
+    throw new Error("Insufficient balance")
+  }
+
+  // Create withdrawal request
+  const { data: request, error } = await supabase
+    .from("user_withdrawal_requests")
+    .insert({
+      user_wallet: walletAddress,
+      amount_usd: amountUsd,
+      recipient_address: recipientAddress,
+      status: "pending",
+    })
+    .select()
+    .single()
+
+  if (error) throw new Error(`Failed to create withdrawal request: ${error.message}`)
+
+  // Deduct balance immediately (held in pending withdrawal)
+  await deductBalance(
+    walletAddress,
+    amountUsd,
+    "withdrawal",
+    undefined,
+    `Withdrawal request ${request.id}`
+  )
+
+  return request
+}
+
+/**
+ * Get withdrawal requests for a user
+ */
+export async function getWithdrawalRequests(
+  walletAddress: string,
+  limit: number = 50
+): Promise<any[]> {
+  if (!supabase) throw new Error("Supabase not configured")
+
+  const { data, error } = await supabase
+    .from("user_withdrawal_requests")
+    .select("*")
+    .eq("user_wallet", walletAddress)
+    .order("requested_at", { ascending: false })
+    .limit(limit)
+
+  if (error) throw new Error(`Failed to get withdrawal requests: ${error.message}`)
+  return data || []
+}
+
+/**
+ * Cancel a pending withdrawal (admin or user)
+ */
+export async function cancelWithdrawal(withdrawalId: string): Promise<void> {
+  if (!supabase) throw new Error("Supabase not configured")
+
+  // Get withdrawal details
+  const { data: withdrawal, error: fetchError } = await supabase
+    .from("user_withdrawal_requests")
+    .select("*")
+    .eq("id", withdrawalId)
+    .single()
+
+  if (fetchError) throw new Error("Withdrawal request not found")
+  if (withdrawal.status !== "pending") throw new Error("Can only cancel pending withdrawals")
+
+  // Update status
+  await supabase
+    .from("user_withdrawal_requests")
+    .update({ status: "cancelled", processed_at: new Date().toISOString() })
+    .eq("id", withdrawalId)
+
+  // Refund the amount
+  await refundBalance(
+    withdrawal.user_wallet,
+    withdrawal.amount_usd,
+    undefined,
+    `Withdrawal ${withdrawalId} cancelled`
+  )
+}
+
+/**
+ * Complete a withdrawal (admin only - after sending funds)
+ */
+export async function completeWithdrawal(
+  withdrawalId: string,
+  transactionSignature: string,
+  processedBy: string
+): Promise<void> {
+  if (!supabase) throw new Error("Supabase not configured")
+
+  // Check if transaction was already processed
+  const { data: existingTx } = await supabase
+    .from("processed_transactions")
+    .select("*")
+    .eq("transaction_signature", transactionSignature)
+    .single()
+
+  if (existingTx) {
+    throw new Error("Transaction signature already used")
+  }
+
+  // Get withdrawal details
+  const { data: withdrawal, error: fetchError } = await supabase
+    .from("user_withdrawal_requests")
+    .select("*")
+    .eq("id", withdrawalId)
+    .single()
+
+  if (fetchError) throw new Error("Withdrawal request not found")
+  if (withdrawal.status !== "pending") throw new Error("Withdrawal is not pending")
+
+  // Mark as completed
+  await supabase
+    .from("user_withdrawal_requests")
+    .update({
+      status: "completed",
+      transaction_signature: transactionSignature,
+      processed_at: new Date().toISOString(),
+      processed_by: processedBy,
+    })
+    .eq("id", withdrawalId)
+
+  // Record in processed transactions
+  await supabase
+    .from("processed_transactions")
+    .insert({
+      transaction_signature: transactionSignature,
+      wallet_address: withdrawal.user_wallet,
+      amount_usd: withdrawal.amount_usd,
+      transaction_type: "withdrawal",
+    })
 }
 
 /**

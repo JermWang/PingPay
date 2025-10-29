@@ -12,8 +12,8 @@ import { BalanceIndicator } from "./balance-indicator"
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/marketplace", label: "Marketplace" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/creators", label: "Creator Dashboard" },
+  { href: "/dashboard", label: "My Account" },
+  { href: "/creators", label: "For Creators" },
   { href: "/docs", label: "Docs" },
 ]
 

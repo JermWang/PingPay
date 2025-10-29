@@ -21,6 +21,10 @@ export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [copied, setCopied] = useState(false)
+  const [stats, setStats] = useState({
+    minPrice: 0.01,
+    apiCount: 0
+  })
   
   const TOKEN_ADDRESS = "COMING SOON" // Replace with actual token address when ready
   
@@ -37,6 +41,32 @@ export function Hero() {
     const y = target.getBoundingClientRect().top + window.scrollY - navOffset
     window.scrollTo({ top: y, behavior: "smooth" })
   }
+
+  // Load dynamic stats
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const res = await fetch('/api/services')
+        if (res.ok) {
+          const data = await res.json()
+          const services = data.services || []
+          
+          // Calculate minimum price from all services
+          const minPrice = services.length > 0
+            ? Math.min(...services.map((s: any) => s.price_usd))
+            : 0.01
+          
+          setStats({
+            minPrice,
+            apiCount: services.length
+          })
+        }
+      } catch (error) {
+        console.error("Failed to load stats:", error)
+      }
+    }
+    loadStats()
+  }, [])
 
   // Calculate scroll progress for 3D animation
   useEffect(() => {
@@ -179,7 +209,9 @@ export function Hero() {
 
           <div className="mt-8 md:mt-16 grid grid-cols-3 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">$0.01</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
+                ${stats.minPrice.toFixed(2)}
+              </div>
               <div className="text-xs md:text-sm text-white/80">Starting price</div>
             </div>
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
@@ -187,7 +219,9 @@ export function Hero() {
               <div className="text-xs md:text-sm text-white/80">Verification</div>
             </div>
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">5+</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
+                {stats.apiCount}+
+              </div>
               <div className="text-xs md:text-sm text-white/80">APIs</div>
             </div>
           </div>

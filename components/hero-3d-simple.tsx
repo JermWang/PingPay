@@ -146,7 +146,7 @@ export function Hero3DScene({ scrollProgress }: Hero3DSceneProps) {
         alpha: false,
         powerPreference: "high-performance"
       }}
-      camera={{ position: [0, 0, 1.2], fov: 60 }}
+      camera={{ position: [0, 0, 1.2], fov: 50 }}
       style={{ width: "100%", height: "100%", background: "#000" }}
     >
       <color attach="background" args={["#000"]} />
