@@ -424,7 +424,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
       <DialogTrigger asChild>
         <GlowButton label="Try Now" className="w-full" />
       </DialogTrigger>
-      <DialogContent className="backdrop-blur-xl bg-white/5 border border-white/10 p-4 sm:p-6 max-h-[85vh] overflow-y-auto sm:max-w-2xl shadow-[0_0_25px_rgba(0,249,255,0.15)]">
+      <DialogContent className="backdrop-blur-xl bg-white/5 border border-white/10 p-4 sm:p-6 max-h-[90vh] overflow-y-auto max-w-[95vw] sm:max-w-3xl shadow-[0_0_25px_rgba(0,249,255,0.15)]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-cyan-400" />
@@ -609,22 +609,22 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
               <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-3 text-xs text-white shadow-lg">
                 <strong>🔎 API Call Examples</strong>
-                <p className="mt-1 text-white/80">Replace the example address with your own wallet:</p>
-                <div className="mt-2 grid md:grid-cols-2 gap-2">
-                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto">
-                    <div className="text-white/60 mb-1">Beginner (direct URL)</div>
-                    <pre className="text-white/90">{buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}</pre>
+                <p className="mt-1 text-white/80 text-[10px] sm:text-xs">Replace the example address with your own wallet:</p>
+                <div className="mt-2 space-y-2">
+                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto max-w-full">
+                    <div className="text-white/60 mb-1 text-[10px]">Beginner (direct URL)</div>
+                    <pre className="text-white/90 text-[9px] sm:text-[10px] break-all whitespace-pre-wrap">{buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}</pre>
                   </div>
-                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto">
-                    <div className="text-white/60 mb-1">Expert (curl with API key)</div>
-                    <pre className="text-white/90">{`curl -H "Authorization: Bearer YOUR_API_KEY" "${buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}"`}</pre>
+                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto max-w-full">
+                    <div className="text-white/60 mb-1 text-[10px]">Expert (curl with API key)</div>
+                    <pre className="text-white/90 text-[9px] sm:text-[10px] break-all whitespace-pre-wrap">{`curl -H "Authorization: Bearer YOUR_API_KEY" "${buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}"`}</pre>
+                  </div>
+                  <div className="bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto max-w-full">
+                    <div className="text-white/60 mb-1 text-[10px]">One‑Time Payment (x402) after paying</div>
+                    <pre className="text-white/90 text-[9px] sm:text-[10px] break-all whitespace-pre-wrap">{`curl -H "X-Quote-Id: ${quote.quoteId}" -H "X-Transaction-Signature: YOUR_TX_SIG" "${buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET')}"`}</pre>
                   </div>
                 </div>
-                <div className="mt-2 bg-black/40 border border-white/10 rounded p-2 font-mono overflow-x-auto">
-                  <div className="text-white/60 mb-1">One‑Time Payment (x402) headers after paying</div>
-                  <pre className="text-white/90">{`curl -H "X-Quote-Id: ${quote.quoteId}" -H "X-Transaction-Signature: YOUR_SOLANA_TX_SIGNATURE" "${buildUrl().replace(EXAMPLE_SOLANA_ADDRESS, 'YOUR_WALLET_ADDRESS')}"`}</pre>
-                </div>
-                <p className="mt-2 text-xs text-yellow-300">Important: Replace the example address and placeholders with your own values.</p>
+                <p className="mt-2 text-[10px] text-yellow-300">⚠️ Replace example addresses with your own values.</p>
               </div>
 
               <div className="space-y-2">
