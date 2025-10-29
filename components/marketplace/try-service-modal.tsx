@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
 import { GlowButton } from "@/components/shared/GlowButton"
 import type { Service } from "@/lib/types"
@@ -20,12 +21,29 @@ type QuoteState = {
 } | null
 
 export function TryServiceModal({ service }: TryServiceModalProps) {
+  const { publicKey, sendTransaction } = useWallet()
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [quote, setQuote] = React.useState<QuoteState>(null)
   const [signature, setSignature] = React.useState("")
   const [result, setResult] = React.useState<any>(null)
   const [error, setError] = React.useState<string | null>(null)
+  const [paymentMethod, setPaymentMethod] = React.useState<'usdc' | 'sol'>('usdc')
+  const [solPrice, setSolPrice] = React.useState<number>(0)
+
+  // Fetch SOL price on mount
+  React.useEffect(() => {
+    async function fetchSolPrice() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd')
+        const data = await res.json()
+        setSolPrice(data.solana?.usd || 100)
+      } catch (err) {
+        setSolPrice(100) // Fallback price
+      }
+    }
+    fetchSolPrice()
+  }, [])
 
   const buildUrl = React.useCallback(() => {
     const url = service.endpoint
@@ -207,9 +225,36 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
               </div>
 
               <div className="bg-black/50 backdrop-blur-md border border-white/20 rounded-lg p-4 space-y-3 shadow-xl">
-                <div className="flex items-center justify-between">
-                  <span className="text-white/80 text-sm">Amount</span>
-                  <span className="text-lg font-bold text-cyan-400">${quote.amountUsd.toFixed(4)} USD</span>
+                <div className="space-y-2">
+                  <span className="text-white/80 text-sm">Payment Method</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setPaymentMethod('usdc')}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                        paymentMethod === 'usdc'
+                          ? 'bg-cyan-500/20 border-2 border-cyan-400 text-white'
+                          : 'bg-black/40 border border-white/20 text-white/60 hover:text-white'
+                      }`}
+                    >
+                      💵 USDC
+                      <div className="text-xs mt-1 font-bold text-cyan-400">
+                        {quote.amountUsd.toFixed(4)} USDC
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('sol')}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                        paymentMethod === 'sol'
+                          ? 'bg-cyan-500/20 border-2 border-cyan-400 text-white'
+                          : 'bg-black/40 border border-white/20 text-white/60 hover:text-white'
+                      }`}
+                    >
+                      ◎ SOL
+                      <div className="text-xs mt-1 font-bold text-cyan-400">
+                        {solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...'} SOL
+                      </div>
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-1">
                   <span className="text-white/80 text-xs">Recipient Address</span>
@@ -223,12 +268,38 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                 </div>
               </div>
 
+              {publicKey ? (
+                <div className="space-y-3">
+                  <div className="bg-green-500/20 backdrop-blur-md border border-green-400/40 rounded-lg p-3 text-xs text-white shadow-lg">
+                    <strong>✅ Wallet Connected:</strong> {publicKey.toBase58().slice(0, 4)}...{publicKey.toBase58().slice(-4)}
+                  </div>
+                  
+                  <GlowButton 
+                    label={loading ? "Processing Payment..." : `💳 Pay ${paymentMethod === 'usdc' ? quote.amountUsd.toFixed(4) + ' USDC' : (solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...') + ' SOL'} with Connected Wallet`}
+                    onClick={() => {
+                      alert('Wallet payment integration coming soon! For now, please use the manual payment method below.')
+                    }}
+                    disabled={loading}
+                    className="w-full"
+                  />
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/20"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs">
+                      <span className="px-2 bg-black text-white/60">OR</span>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="bg-amber-500/20 backdrop-blur-md border border-amber-400/40 rounded-lg p-3 text-xs text-white shadow-lg">
-                <strong>📋 Instructions:</strong>
+                <strong>📋 Manual Payment Instructions:</strong>
                 <ol className="mt-1 ml-4 space-y-1 list-decimal">
                   <li>Copy the recipient address above</li>
                   <li>Open your Solana wallet (Phantom, Solflare, etc.)</li>
-                  <li>Send the exact amount in SOL equivalent</li>
+                  <li>Send <strong>{paymentMethod === 'usdc' ? `${quote.amountUsd.toFixed(4)} USDC` : `${solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...'} SOL`}</strong> to the address</li>
                   <li>Copy the transaction signature</li>
                   <li>Paste it below and submit</li>
                 </ol>
