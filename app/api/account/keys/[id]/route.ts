@@ -3,7 +3,7 @@ import { revokeApiKey, updateApiKeyName } from "@/lib/api-key-manager"
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url)
@@ -16,7 +16,8 @@ export async function DELETE(
       )
     }
 
-    await revokeApiKey(params.id, walletAddress)
+    const { id } = await params
+    await revokeApiKey(id, walletAddress)
 
     return NextResponse.json({
       success: true,
@@ -36,7 +37,7 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json()
@@ -49,7 +50,8 @@ export async function PATCH(
       )
     }
 
-    const updatedKey = await updateApiKeyName(params.id, wallet, name)
+    const { id } = await params
+    const updatedKey = await updateApiKeyName(id, wallet, name)
 
     return NextResponse.json({
       success: true,
