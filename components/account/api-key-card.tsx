@@ -88,7 +88,7 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
 
       <div className="bg-black/40 rounded-lg p-3 space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <code className="text-xs font-mono break-all flex-1">
+          <code className="text-xs font-mono break-all flex-1 text-white">
             {showFullKey && plainKey ? plainKey : displayKey}
           </code>
           <div className="flex items-center gap-1 flex-shrink-0">
@@ -117,10 +117,9 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
         <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
           Usage example
         </summary>
-        <div className="mt-2 bg-black/40 rounded p-2 overflow-x-auto">
-          <code className="text-[10px] text-green-400">
-            curl -H "Authorization: Bearer {plainKey || 'YOUR_API_KEY'}"
-            https://pingpay.app/api/solana/balance?address=...
+        <div className="mt-2 bg-black/40 rounded p-3 overflow-x-auto">
+          <code className="text-xs text-white whitespace-pre-wrap break-all">
+            curl -H "Authorization: Bearer {plainKey || 'YOUR_API_KEY'}" https://pingpay.app/api/solana/balance?address=YOUR_SOLANA_ADDRESS
           </code>
         </div>
       </details>
