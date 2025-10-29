@@ -99,7 +99,7 @@ export async function validateApiKey(plainKey: string): Promise<string | null> {
 }
 
 /**
- * List all API keys for a user
+ * List all active API keys for a user
  */
 export async function listUserApiKeys(walletAddress: string): Promise<ApiKey[]> {
   if (!supabase) throw new Error("Supabase not configured")
@@ -108,6 +108,7 @@ export async function listUserApiKeys(walletAddress: string): Promise<ApiKey[]> 
     .from("api_keys")
     .select("*")
     .eq("user_wallet", walletAddress)
+    .eq("is_active", true) // Only show active keys
     .order("created_at", { ascending: false })
 
   if (error) throw new Error(`Failed to list API keys: ${error.message}`)
@@ -134,7 +135,7 @@ export async function getApiKey(keyId: string): Promise<ApiKey | null> {
 }
 
 /**
- * Revoke (deactivate) an API key
+ * Revoke (permanently delete) an API key
  */
 export async function revokeApiKey(keyId: string, walletAddress: string): Promise<void> {
   if (!supabase) throw new Error("Supabase not configured")
@@ -144,12 +145,14 @@ export async function revokeApiKey(keyId: string, walletAddress: string): Promis
   if (!key) throw new Error("API key not found")
   if (key.user_wallet !== walletAddress) throw new Error("Unauthorized")
 
+  // Permanently delete the API key from database
   const { error } = await supabase
     .from("api_keys")
-    .update({ is_active: false })
+    .delete()
     .eq("id", keyId)
+    .eq("user_wallet", walletAddress) // Extra safety check
 
-  if (error) throw new Error(`Failed to revoke API key: ${error.message}`)
+  if (error) throw new Error(`Failed to delete API key: ${error.message}`)
 }
 
 /**

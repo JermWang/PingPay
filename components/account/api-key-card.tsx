@@ -136,10 +136,12 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
             </AlertDialogTrigger>
             <AlertDialogContent className="backdrop-blur-xl bg-white/5 border border-white/10">
               <AlertDialogHeader>
-                <AlertDialogTitle>Revoke API Key?</AlertDialogTitle>
+                <AlertDialogTitle>Permanently Delete API Key?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will immediately disable this API key. Any applications using it will no longer work.
-                  This action cannot be undone.
+                  This will <strong className="text-red-400">permanently delete</strong> this API key from our database. 
+                  Any applications using it will immediately stop working.
+                  <br /><br />
+                  <strong>This action cannot be undone.</strong>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -148,7 +150,7 @@ export function ApiKeyCard({ apiKey, plainKey, onRevoke }: ApiKeyCardProps) {
                   onClick={onRevoke}
                   className="bg-red-500 hover:bg-red-600"
                 >
-                  Revoke Key
+                  Delete Permanently
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

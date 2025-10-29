@@ -126,9 +126,14 @@ export default function DashboardPage() {
       if (!res.ok) throw new Error(data.error)
 
       toast({
-        title: "API Key Revoked",
-        description: "The API key has been deactivated",
+        title: "API Key Deleted",
+        description: "The API key has been permanently removed and can no longer be used",
       })
+
+      // Clear the created key if it was the one being revoked
+      if (createdKey?.apiKey.id === keyId) {
+        setCreatedKey(null)
+      }
 
       fetchDashboardData()
     } catch (error: any) {
