@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { GlowButton } from "@/components/shared/GlowButton"
 import type { Service } from "@/lib/types"
 import { EXAMPLE_SOLANA_ADDRESS, EXAMPLE_VOTE_ACCOUNT } from "@/lib/constants"
-import { CheckCircle2, Circle, Wallet, Send, Sparkles, Key, CreditCard } from "lucide-react"
+import { CheckCircle2, Circle, Wallet, Send, Sparkles, Key, CreditCard, Copy as CopyIcon } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 
@@ -538,8 +538,24 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                 </div>
                 <div className="space-y-1">
                   <span className="text-white/80 text-xs">Recipient Address</span>
-                  <div className="bg-black/60 backdrop-blur-sm border border-white/10 rounded px-2 py-1.5 font-mono text-xs break-all text-white">
-                    {quote.address}
+                  <div className="bg-black/60 backdrop-blur-sm border border-white/10 rounded px-2 py-1.5 text-xs text-white flex items-center justify-between gap-2">
+                    <code className="font-mono break-all flex-1">
+                      {(quote.asset === 'USDC' && quote.tokenAccount) ? quote.tokenAccount : quote.address}
+                    </code>
+                    <button
+                      onClick={async () => {
+                        const recipient = (quote.asset === 'USDC' && quote.tokenAccount) ? quote.tokenAccount : quote.address
+                        try {
+                          await navigator.clipboard.writeText(recipient)
+                          toast({ title: 'Copied', description: 'Recipient address copied to clipboard' })
+                        } catch {}
+                      }}
+                      className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 px-2 py-1 rounded hover:bg-white/5 flex-shrink-0"
+                      title="Copy address"
+                    >
+                      <CopyIcon className="w-3.5 h-3.5" />
+                      <span className="text-[11px]">Copy</span>
+                    </button>
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-xs">
