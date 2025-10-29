@@ -2,12 +2,15 @@
 
 import * as React from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
+import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js"
+import { getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
 import { GlowButton } from "@/components/shared/GlowButton"
 import type { Service } from "@/lib/types"
 import { EXAMPLE_SOLANA_ADDRESS, EXAMPLE_VOTE_ACCOUNT } from "@/lib/constants"
 import { CheckCircle2, Circle, Wallet, Send, Sparkles, Key, CreditCard } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useToast } from "@/hooks/use-toast"
 
 interface TryServiceModalProps {
   service: Service
@@ -20,8 +23,12 @@ type QuoteState = {
   expiresAt: string
 } | null
 
+const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v') // USDC on mainnet
+const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com'
+
 export function TryServiceModal({ service }: TryServiceModalProps) {
   const { publicKey, sendTransaction } = useWallet()
+  const { toast } = useToast()
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [quote, setQuote] = React.useState<QuoteState>(null)
@@ -85,8 +92,98 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
     }
   }
 
-  const verifyWithSignature = async () => {
-    if (!quote || !signature) return
+  const handleWalletPayment = async () => {
+    if (!publicKey || !quote || !sendTransaction) return
+    
+    try {
+      setLoading(true)
+      setError(null)
+
+      const connection = new Connection(RPC_URL, 'confirmed')
+      const recipientPubkey = new PublicKey(quote.address)
+
+      let txSignature: string
+
+      if (paymentMethod === 'usdc') {
+        // USDC Transfer
+        const senderTokenAccount = await getAssociatedTokenAddress(USDC_MINT, publicKey)
+        const recipientTokenAccount = await getAssociatedTokenAddress(USDC_MINT, recipientPubkey)
+        
+        const amountInDecimals = Math.floor(quote.amountUsd * 1_000_000) // USDC has 6 decimals
+
+        const transaction = new Transaction().add(
+          createTransferInstruction(
+            senderTokenAccount,
+            recipientTokenAccount,
+            publicKey,
+            amountInDecimals,
+            [],
+            TOKEN_PROGRAM_ID
+          )
+        )
+
+        const { blockhash } = await connection.getLatestBlockhash()
+        transaction.recentBlockhash = blockhash
+        transaction.feePayer = publicKey
+
+        txSignature = await sendTransaction(transaction, connection)
+        
+        toast({
+          title: "Transaction Sent",
+          description: "Waiting for confirmation...",
+        })
+
+        await connection.confirmTransaction(txSignature, 'confirmed')
+
+      } else {
+        // SOL Transfer
+        const amountInLamports = Math.floor((quote.amountUsd / solPrice) * LAMPORTS_PER_SOL)
+
+        const transaction = new Transaction().add(
+          SystemProgram.transfer({
+            fromPubkey: publicKey,
+            toPubkey: recipientPubkey,
+            lamports: amountInLamports,
+          })
+        )
+
+        const { blockhash } = await connection.getLatestBlockhash()
+        transaction.recentBlockhash = blockhash
+        transaction.feePayer = publicKey
+
+        txSignature = await sendTransaction(transaction, connection)
+        
+        toast({
+          title: "Transaction Sent",
+          description: "Waiting for confirmation...",
+        })
+
+        await connection.confirmTransaction(txSignature, 'confirmed')
+      }
+
+      // Now verify with the API
+      setSignature(txSignature)
+      await verifyWithSignature(txSignature, quote.quoteId)
+
+    } catch (e: any) {
+      console.error('Payment error:', e)
+      setError(e?.message || "Payment failed")
+      toast({
+        title: "Payment Failed",
+        description: e?.message || "Transaction failed",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const verifyWithSignature = async (txSig?: string, quoteIdOverride?: string) => {
+    const useSignature = txSig || signature
+    const useQuote = quoteIdOverride || quote?.quoteId
+    
+    if (!useQuote || !useSignature) return
+    
     try {
       setLoading(true)
       setError(null)
@@ -94,14 +191,18 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
       const res = await fetch(buildUrl(), {
         method: "GET",
         headers: {
-          "X-Quote-Id": quote.quoteId,
-          "X-Transaction-Signature": signature,
+          "X-Quote-Id": useQuote,
+          "X-Transaction-Signature": useSignature,
         },
       })
       if (res.ok) {
         const data = await res.json()
         setResult(data)
         setQuote(null)
+        toast({
+          title: "Success!",
+          description: "Payment verified and data received",
+        })
       } else {
         const data = await res.json().catch(() => ({}))
         setError(data.error || `Verification failed (${res.status})`)
@@ -276,9 +377,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                   
                   <GlowButton 
                     label={loading ? "Processing Payment..." : `💳 Pay ${paymentMethod === 'usdc' ? quote.amountUsd.toFixed(4) + ' USDC' : (solPrice > 0 ? (quote.amountUsd / solPrice).toFixed(6) : '...') + ' SOL'} with Connected Wallet`}
-                    onClick={() => {
-                      alert('Wallet payment integration coming soon! For now, please use the manual payment method below.')
-                    }}
+                    onClick={handleWalletPayment}
                     disabled={loading}
                     className="w-full"
                   />
@@ -315,7 +414,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                 />
                 <GlowButton 
                   label={loading ? "Verifying Payment..." : "Submit & Get Data"} 
-                  onClick={verifyWithSignature} 
+                  onClick={() => verifyWithSignature()} 
                   disabled={loading || signature.length < 32}
                   className="w-full"
                 />
