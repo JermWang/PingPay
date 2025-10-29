@@ -257,9 +257,114 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         const data = await res.json()
         setResult(data)
         setQuote(null)
+        
+        // Open result in new window
+        const resultWindow = window.open('', '_blank', 'width=800,height=600')
+        if (resultWindow) {
+          resultWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>API Response - ${service.name}</title>
+              <style>
+                body {
+                  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+                  color: #00f9ff;
+                  padding: 30px;
+                  margin: 0;
+                }
+                .container {
+                  max-width: 900px;
+                  margin: 0 auto;
+                  background: rgba(0, 0, 0, 0.6);
+                  border: 1px solid rgba(0, 249, 255, 0.3);
+                  border-radius: 12px;
+                  padding: 25px;
+                  box-shadow: 0 0 30px rgba(0, 249, 255, 0.2);
+                }
+                h1 {
+                  color: #00f9ff;
+                  margin-top: 0;
+                  font-size: 24px;
+                  text-shadow: 0 0 10px rgba(0, 249, 255, 0.5);
+                }
+                .success-badge {
+                  display: inline-block;
+                  background: rgba(0, 249, 255, 0.2);
+                  color: #00f9ff;
+                  padding: 6px 16px;
+                  border-radius: 20px;
+                  font-size: 14px;
+                  font-weight: bold;
+                  margin-bottom: 20px;
+                  border: 1px solid rgba(0, 249, 255, 0.5);
+                }
+                pre {
+                  background: rgba(0, 0, 0, 0.5);
+                  border: 1px solid rgba(0, 249, 255, 0.2);
+                  border-radius: 8px;
+                  padding: 20px;
+                  overflow-x: auto;
+                  white-space: pre-wrap;
+                  word-wrap: break-word;
+                  font-size: 14px;
+                  line-height: 1.6;
+                  color: #e0e0e0;
+                }
+                .timestamp {
+                  color: rgba(255, 255, 255, 0.6);
+                  font-size: 12px;
+                  margin-top: 20px;
+                }
+                .copy-btn {
+                  background: linear-gradient(135deg, #00f9ff 0%, #00b8d4 100%);
+                  color: #0a0a0a;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: bold;
+                  margin-top: 15px;
+                  font-size: 14px;
+                  transition: transform 0.2s;
+                }
+                .copy-btn:hover {
+                  transform: scale(1.05);
+                }
+                .copy-btn:active {
+                  transform: scale(0.95);
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>✅ API Call Successful</h1>
+                <div class="success-badge">Payment Verified & Data Received</div>
+                <h3 style="color: #00f9ff; margin-bottom: 10px;">Response Data:</h3>
+                <pre id="json-data">${JSON.stringify(data, null, 2)}</pre>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                <div class="timestamp">Retrieved: ${new Date().toLocaleString()}</div>
+              </div>
+              <script>
+                function copyToClipboard() {
+                  const text = document.getElementById('json-data').textContent;
+                  navigator.clipboard.writeText(text).then(() => {
+                    const btn = document.querySelector('.copy-btn');
+                    btn.textContent = '✓ Copied!';
+                    setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 2000);
+                  });
+                }
+              </script>
+            </body>
+            </html>
+          `)
+          resultWindow.document.close()
+        }
+        
         toast({
           title: "Success!",
-          description: "Payment verified and data received",
+          description: "Payment verified and data received. Check the new tab!",
         })
       } else {
         const data = await res.json().catch(() => ({}))
