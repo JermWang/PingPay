@@ -23,7 +23,8 @@ export function Hero() {
   const [copied, setCopied] = useState(false)
   const [stats, setStats] = useState({
     minPrice: 0.01,
-    apiCount: 0
+    apiCount: 0,
+    totalRequests: 37
   })
   
   const TOKEN_ADDRESS = "CK4CJpLHQBtW2xaJ43SGVBSMkZfxhciQNuftimRKpump"
@@ -57,16 +58,39 @@ export function Hero() {
             ? Math.min(...services.map((s: any) => s.price_usd))
             : 0.01
           
-          setStats({
+          setStats(prev => ({
+            ...prev,
             minPrice,
             apiCount: services.length
-          })
+          }))
         }
       } catch (error) {
         console.error("Failed to load stats:", error)
       }
     }
     loadStats()
+
+    // Poll for request count updates every 5 seconds
+    const loadRequestCount = async () => {
+      try {
+        const res = await fetch('/api/service-stats')
+        if (res.ok) {
+          const data = await res.json()
+          const totalRequests = data.stats?.reduce((sum: number, stat: any) => sum + (stat.request_count || 0), 0) || 0
+          setStats(prev => ({
+            ...prev,
+            totalRequests
+          }))
+        }
+      } catch (error) {
+        console.error("Failed to load request count:", error)
+      }
+    }
+    
+    loadRequestCount()
+    const interval = setInterval(loadRequestCount, 5000) // Update every 5 seconds
+    
+    return () => clearInterval(interval)
   }, [])
 
   // Calculate scroll progress for 3D animation
@@ -208,7 +232,7 @@ export function Hero() {
             </GlowButton>
           </div>
 
-          <div className="mt-8 md:mt-16 grid grid-cols-3 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
+          <div className="mt-8 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
             <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
                 ${stats.minPrice.toFixed(2)}
@@ -224,6 +248,15 @@ export function Hero() {
                 {stats.apiCount}+
               </div>
               <div className="text-xs md:text-sm text-white/80">APIs</div>
+            </div>
+            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl relative overflow-hidden">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2 transition-all duration-300">
+                {stats.totalRequests.toLocaleString()}
+              </div>
+              <div className="text-xs md:text-sm text-white/80">Total Requests</div>
+              {stats.totalRequests > 0 && (
+                <div className="absolute inset-0 bg-primary/10 animate-pulse pointer-events-none" />
+              )}
             </div>
           </div>
         </div>
