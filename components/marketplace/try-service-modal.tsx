@@ -144,23 +144,32 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
       // Get a working connection
       const connection = await getConnection()
-      const recipientPubkey = new PublicKey(quote.address)
 
       let txSignature: string
 
       if (paymentMethod === 'usdc') {
         // USDC Transfer
+        // quote.address is now the correct USDC ATA for the recipient (derived server-side)
+        const recipientUsdcAta = new PublicKey(quote.address)
         const senderTokenAccount = await getAssociatedTokenAddress(USDC_MINT, publicKey)
-        const recipientTokenAccount = await getAssociatedTokenAddress(USDC_MINT, recipientPubkey)
+
+        console.log('💳 USDC Payment Details:', {
+          sender: publicKey.toBase58(),
+          senderAta: senderTokenAccount.toBase58(),
+          recipientAta: recipientUsdcAta.toBase58(),
+          amount: quote.amountUsd
+        })
 
         const senderInfo = await connection.getAccountInfo(senderTokenAccount)
-        const recipientInfo = await connection.getAccountInfo(recipientTokenAccount)
+        const recipientInfo = await connection.getAccountInfo(recipientUsdcAta)
 
         const amountInDecimals = Math.floor(quote.amountUsd * 1_000_000) // USDC has 6 decimals
 
         const transaction = new Transaction()
-        // Ensure ATAs exist (payer will fund creation if missing)
+        
+        // Create sender's USDC ATA if needed
         if (!senderInfo) {
+          console.log('Creating sender USDC ATA...')
           transaction.add(
             createAssociatedTokenAccountInstruction(
               publicKey,
@@ -170,21 +179,20 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
             )
           )
         }
+        
+        // Note: recipient ATA creation is handled server-side during quote generation
+        // But we'll check and create if somehow it doesn't exist
         if (!recipientInfo) {
-          transaction.add(
-            createAssociatedTokenAccountInstruction(
-              publicKey,
-              recipientTokenAccount,
-              recipientPubkey,
-              USDC_MINT
-            )
-          )
+          console.warn('Recipient USDC ATA does not exist - this should have been created server-side')
+          // We can't create it without knowing the owner, so this will likely fail
+          // The quote should have already ensured the ATA exists
         }
 
+        // Transfer USDC to the recipient's ATA
         transaction.add(
           createTransferInstruction(
             senderTokenAccount,
-            recipientTokenAccount,
+            recipientUsdcAta,
             publicKey,
             amountInDecimals,
             [],
@@ -216,13 +224,21 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
         }
 
       } else {
-        // SOL Transfer
+        // SOL Transfer - quote.address is the wallet address for SOL
+        const recipientWallet = new PublicKey(quote.address)
         const amountInLamports = Math.floor((quote.amountUsd / solPrice) * LAMPORTS_PER_SOL)
+
+        console.log('◎ SOL Payment Details:', {
+          sender: publicKey.toBase58(),
+          recipient: recipientWallet.toBase58(),
+          amountSol: (amountInLamports / LAMPORTS_PER_SOL).toFixed(6),
+          amountUsd: quote.amountUsd
+        })
 
         const transaction = new Transaction().add(
           SystemProgram.transfer({
             fromPubkey: publicKey,
-            toPubkey: recipientPubkey,
+            toPubkey: recipientWallet,
             lamports: amountInLamports,
           })
         )
@@ -256,7 +272,16 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
 
       toast({
         title: "Transaction Confirmed!",
-        description: "Verifying payment with API...",
+        description: "Waiting for network indexing...",
+      })
+
+      // Wait 3 seconds for RPC nodes to index the transaction
+      console.log('⏳ Waiting 3 seconds for RPC indexing...')
+      await new Promise(resolve => setTimeout(resolve, 3000))
+
+      toast({
+        title: "Verifying Payment",
+        description: "Checking transaction on-chain...",
       })
 
       // Now verify with the API

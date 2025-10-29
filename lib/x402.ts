@@ -1,4 +1,5 @@
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js"
+import { getAssociatedTokenAddress } from "@solana/spl-token"
 import { PAYMENT_RECEIVER_ADDRESS, QUOTE_EXPIRY_SECONDS, SOLANA_RPC_URL, USDC_MINT_ADDRESS } from "./constants"
 import type { Quote, X402Response } from "./types"
 
@@ -75,16 +76,35 @@ async function verifyWithHelius(
 
 /**
  * Generate a payment quote for an API request
+ * Now properly derives USDC ATA for USDC payments
  */
-export async function generateQuote(serviceId: string, amountUsd: number): Promise<Quote> {
+export async function generateQuote(serviceId: string, amountUsd: number, paymentToken: 'USDC' | 'SOL' = 'USDC'): Promise<Quote> {
   const expiresAt = new Date(Date.now() + QUOTE_EXPIRY_SECONDS * 1000)
+  
+  // Derive the correct payment address based on token type
+  let paymentAddress = PAYMENT_RECEIVER_ADDRESS
+  
+  if (paymentToken === 'USDC') {
+    // For USDC, derive the ATA from the receiver's wallet address
+    try {
+      const receiverPubkey = new PublicKey(PAYMENT_RECEIVER_ADDRESS)
+      const usdcMintPubkey = new PublicKey(USDC_MINT_ADDRESS)
+      const usdcAta = await getAssociatedTokenAddress(usdcMintPubkey, receiverPubkey)
+      paymentAddress = usdcAta.toBase58()
+      console.log('[x402] Generated USDC ATA for receiver wallet', PAYMENT_RECEIVER_ADDRESS, ':', paymentAddress)
+    } catch (err) {
+      console.error('[x402] Failed to derive USDC ATA, using wallet address:', err)
+    }
+  } else {
+    console.log('[x402] Using wallet address for SOL payment:', paymentAddress)
+  }
 
-  // In production, this would insert into Supabase
   const quote: Quote = {
     id: crypto.randomUUID(),
     service_id: serviceId,
     amount_usd: amountUsd,
-    solana_address: PAYMENT_RECEIVER_ADDRESS,
+    solana_address: paymentAddress,
+    payment_token: paymentToken,
     expires_at: expiresAt.toISOString(),
     created_at: new Date().toISOString(),
   }
@@ -203,6 +223,8 @@ export async function verifyTransaction(
 
     // Parse transaction to find USDC transfer
     console.log("[x402] Checking for USDC transfer...")
+    console.log("[x402] Expected recipient (could be wallet or ATA):", expectedRecipient)
+    
     const recipientPubkey = new PublicKey(expectedRecipient)
     const usdcMintPubkey = new PublicKey(USDC_MINT_ADDRESS)
     
@@ -232,6 +254,7 @@ export async function verifyTransaction(
       } catch {}
     }
     console.log("[x402] Account keys resolved:", accountKeysResolved.length)
+    console.log("[x402] Account keys:", accountKeysResolved)
     
     // Find USDC transfers to the recipient
     let transferFound = false
@@ -242,36 +265,48 @@ export async function verifyTransaction(
         (pb) => pb.accountIndex === postBalance.accountIndex
       )
       
+      const tokenAccountAddress = accountKeysResolved[postBalance.accountIndex]
+      
       console.log("[x402] Checking token balance:", {
         mint: postBalance.mint,
         owner: postBalance.owner,
         accountIndex: postBalance.accountIndex,
-        account: accountKeysResolved[postBalance.accountIndex]
+        tokenAccount: tokenAccountAddress
       })
       
-      if (
-        postBalance.mint === usdcMintPubkey.toBase58() &&
-        (
-          // Owner equals our recipient wallet
-          postBalance.owner === recipientPubkey.toBase58() ||
-          // OR the token account itself equals expected recipient (if env is set to ATA)
-          accountKeysResolved[postBalance.accountIndex] === recipientPubkey.toBase58()
-        )
-      ) {
-        const preAmount = Number(preBalance?.uiTokenAmount.amount || 0)
-        const postAmount = Number(postBalance.uiTokenAmount.amount || 0)
-        const amountTransferred = postAmount - preAmount
+      // Check if this is a USDC token account
+      const isUsdcMint = postBalance.mint === usdcMintPubkey.toBase58()
+      
+      if (isUsdcMint) {
+        // Match if:
+        // 1. The token account address itself matches expected recipient (ATA case)
+        // 2. OR the owner of the token account matches expected recipient (wallet case)
+        const matchesRecipient = 
+          tokenAccountAddress === expectedRecipient ||
+          postBalance.owner === expectedRecipient
         
-        console.log("[x402] USDC transfer candidate found:", {
-          preAmount,
-          postAmount,
-          amountTransferred
+        console.log("[x402] USDC token found - matches recipient?", matchesRecipient, {
+          tokenAccount: tokenAccountAddress,
+          owner: postBalance.owner,
+          expectedRecipient
         })
         
-        if (amountTransferred > 0) {
-          transferFound = true
-          transferAmount = amountTransferred
-          break
+        if (matchesRecipient) {
+          const preAmount = Number(preBalance?.uiTokenAmount.amount || 0)
+          const postAmount = Number(postBalance.uiTokenAmount.amount || 0)
+          const amountTransferred = postAmount - preAmount
+          
+          console.log("[x402] USDC transfer candidate found:", {
+            preAmount,
+            postAmount,
+            amountTransferred
+          })
+          
+          if (amountTransferred > 0) {
+            transferFound = true
+            transferAmount = amountTransferred
+            break
+          }
         }
       }
     }
