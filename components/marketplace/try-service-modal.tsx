@@ -11,6 +11,7 @@ import { EXAMPLE_SOLANA_ADDRESS, EXAMPLE_VOTE_ACCOUNT } from "@/lib/constants"
 import { CheckCircle2, Circle, Wallet, Send, Sparkles, Key, CreditCard, Copy as CopyIcon } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
+import { Input } from "@/components/ui/input"
 
 interface TryServiceModalProps {
   service: Service
@@ -54,6 +55,10 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
   const [error, setError] = React.useState<string | null>(null)
   const [paymentMethod, setPaymentMethod] = React.useState<'usdc' | 'sol'>('usdc')
   const [solPrice, setSolPrice] = React.useState<number>(0)
+  // Editable test params (only the address-like part)
+  const [testAddress, setTestAddress] = React.useState<string>(EXAMPLE_SOLANA_ADDRESS)
+  const [testVoteAccount, setTestVoteAccount] = React.useState<string>(EXAMPLE_VOTE_ACCOUNT)
+  const [paramError, setParamError] = React.useState<string | null>(null)
 
   // Fetch SOL price on mount and refresh every 30 seconds
   React.useEffect(() => {
@@ -81,13 +86,13 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
   const buildUrl = React.useCallback(() => {
     const url = service.endpoint
     if (url.includes("/balance") || url.includes("/tokens") || url.includes("/transactions")) {
-      return `${url}?address=${EXAMPLE_SOLANA_ADDRESS}`
+      return `${url}?address=${encodeURIComponent(testAddress)}`
     }
     if (url.includes("/validator")) {
-      return `${url}?vote_account=${EXAMPLE_VOTE_ACCOUNT}`
+      return `${url}?vote_account=${encodeURIComponent(testVoteAccount)}`
     }
     return url
-  }, [service.endpoint])
+  }, [service.endpoint, testAddress, testVoteAccount])
 
   const initialRequest = async () => {
     try {
@@ -460,6 +465,60 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           <div className="text-xs">
             <div className="text-white/80 mb-1">API Endpoint:</div>
             <code className="text-white bg-black/60 backdrop-blur-md border border-white/10 px-2 py-1 rounded block overflow-x-auto">{buildUrl()}</code>
+          </div>
+
+          {/* Editable Test Parameter (only address field) */}
+          <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-lg p-3 space-y-2">
+            {service.endpoint.includes('/validator') ? (
+              <div className="space-y-1">
+                <label className="text-white/80 text-xs">Vote Account (editable)</label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={testVoteAccount}
+                    onChange={(e) => {
+                      const v = e.target.value.trim()
+                      setTestVoteAccount(v)
+                      setParamError(null)
+                    }}
+                    className="flex-1 bg-black/60 border-white/10 text-white h-8"
+                    placeholder="Enter a Solana vote account"
+                  />
+                  <button
+                    onClick={async () => { await navigator.clipboard.writeText(testVoteAccount); toast({ title: 'Copied', description: 'Vote account copied' }) }}
+                    className="text-cyan-400 hover:text-cyan-300 px-2 py-1 rounded hover:bg-white/5"
+                    title="Copy"
+                  >
+                    <CopyIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label className="text-white/80 text-xs">Wallet Address (editable)</label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={testAddress}
+                    onChange={(e) => {
+                      const v = e.target.value.trim()
+                      setTestAddress(v)
+                      setParamError(null)
+                    }}
+                    className="flex-1 bg-black/60 border-white/10 text-white h-8"
+                    placeholder="Enter a Solana wallet address"
+                  />
+                  <button
+                    onClick={async () => { await navigator.clipboard.writeText(testAddress); toast({ title: 'Copied', description: 'Address copied' }) }}
+                    className="text-cyan-400 hover:text-cyan-300 px-2 py-1 rounded hover:bg-white/5"
+                    title="Copy"
+                  >
+                    <CopyIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+            {paramError && (
+              <div className="text-[11px] text-red-300">{paramError}</div>
+            )}
           </div>
 
           {/* Step 1: Initial Request */}
