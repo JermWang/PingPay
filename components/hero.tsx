@@ -139,14 +139,14 @@ export function Hero() {
         <div className="md:col-span-5 text-center md:text-left">
           <button
             onClick={handleCopyToken}
-            className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass-panel glass-outline mb-3 md:mb-8 hover:border-primary/50 transition-colors cursor-pointer group"
+            className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg shadow-primary/10 mb-3 md:mb-8 hover:bg-white/15 hover:border-primary/50 transition-all cursor-pointer group"
           >
             {copied ? (
               <Check className="w-3 h-3 md:w-4 md:h-4 text-green-400" />
             ) : (
               <Copy className="w-3 h-3 md:w-4 md:h-4 text-primary group-hover:text-primary/80" />
             )}
-            <span className="text-xs md:text-sm font-medium text-primary group-hover:text-primary/80">
+            <span className="text-xs md:text-sm font-medium text-white group-hover:text-primary/90">
               {copied ? "Copied!" : TOKEN_ADDRESS}
             </span>
           </button>
@@ -178,17 +178,17 @@ export function Hero() {
           </div>
 
           <div className="mt-8 md:mt-16 grid grid-cols-3 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
-            <div className="text-center">
+            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">$0.01</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Starting price</div>
+              <div className="text-xs md:text-sm text-white/80">Starting price</div>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">&lt;1s</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Verification</div>
+              <div className="text-xs md:text-sm text-white/80">Verification</div>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">5+</div>
-              <div className="text-xs md:text-sm text-muted-foreground">APIs</div>
+              <div className="text-xs md:text-sm text-white/80">APIs</div>
             </div>
           </div>
         </div>

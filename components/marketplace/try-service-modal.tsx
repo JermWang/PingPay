@@ -155,27 +155,27 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           </div>
 
           {/* Info Box */}
-          <div className="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-3 text-sm">
-            <p className="text-cyan-100">
+          <div className="bg-cyan-500/20 backdrop-blur-md border border-cyan-400/40 rounded-lg p-3 text-sm shadow-lg">
+            <p className="text-white">
               💡 <strong>How it works:</strong> This API uses HTTP 402 (Payment Required). Make a request, get a payment quote, pay with Solana, then get your data!
             </p>
           </div>
 
           {/* Endpoint */}
           <div className="text-xs">
-            <div className="text-muted-foreground mb-1">API Endpoint:</div>
-            <code className="text-foreground bg-black/40 px-2 py-1 rounded block overflow-x-auto">{buildUrl()}</code>
+            <div className="text-white/80 mb-1">API Endpoint:</div>
+            <code className="text-white bg-black/60 backdrop-blur-md border border-white/10 px-2 py-1 rounded block overflow-x-auto">{buildUrl()}</code>
           </div>
 
           {/* Step 1: Initial Request */}
           {!quote && !result && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2 text-white">
                   <Circle className="w-4 h-4 text-cyan-400" />
                   Step 1: Make Your Request
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white/80">
                   Click below to send a request to the API. You'll receive a payment quote with the price and payment details.
                 </p>
               </div>
@@ -186,7 +186,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                 className="w-full"
               />
               {error && (
-                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-sm text-destructive">
+                <div className="bg-red-500/20 backdrop-blur-md border border-red-400/40 rounded-lg p-3 text-sm text-white shadow-lg">
                   ⚠️ {error}
                 </div>
               )}
@@ -197,33 +197,33 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           {quote && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2 text-white">
                   <Wallet className="w-4 h-4 text-cyan-400" />
                   Step 2: Make Payment
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white/80">
                   The API returned a payment quote. Send the exact amount to the address below using your Solana wallet.
                 </p>
               </div>
 
-              <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-3">
+              <div className="bg-black/50 backdrop-blur-md border border-white/20 rounded-lg p-4 space-y-3 shadow-xl">
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">Amount</span>
+                  <span className="text-white/80 text-sm">Amount</span>
                   <span className="text-lg font-bold text-cyan-400">${quote.amountUsd.toFixed(4)} USD</span>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-muted-foreground text-xs">Recipient Address</span>
-                  <div className="bg-black/40 rounded px-2 py-1.5 font-mono text-xs break-all">
+                  <span className="text-white/80 text-xs">Recipient Address</span>
+                  <div className="bg-black/60 backdrop-blur-sm border border-white/10 rounded px-2 py-1.5 font-mono text-xs break-all text-white">
                     {quote.address}
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Expires at</span>
-                  <span className="text-foreground">{new Date(quote.expiresAt).toLocaleTimeString()}</span>
+                  <span className="text-white/80">Expires at</span>
+                  <span className="text-white">{new Date(quote.expiresAt).toLocaleTimeString()}</span>
                 </div>
               </div>
 
-              <div className="bg-amber-500/10 border border-amber-400/30 rounded-lg p-3 text-xs text-amber-100">
+              <div className="bg-amber-500/20 backdrop-blur-md border border-amber-400/40 rounded-lg p-3 text-xs text-white shadow-lg">
                 <strong>📋 Instructions:</strong>
                 <ol className="mt-1 ml-4 space-y-1 list-decimal">
                   <li>Copy the recipient address above</li>
@@ -235,12 +235,12 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm text-muted-foreground">Transaction Signature</label>
+                <label className="text-sm text-white/80">Transaction Signature</label>
                 <input
                   value={signature}
                   onChange={(e) => setSignature(e.target.value)}
                   placeholder="Paste your transaction signature here..."
-                  className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-sm outline-none focus:border-cyan-400/50 transition-colors font-mono"
+                  className="w-full bg-black/50 backdrop-blur-md border border-white/20 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/40 outline-none focus:border-cyan-400/50 transition-colors font-mono shadow-lg"
                 />
                 <GlowButton 
                   label={loading ? "Verifying Payment..." : "Submit & Get Data"} 
@@ -249,7 +249,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                   className="w-full"
                 />
                 {error && (
-                  <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-sm text-destructive">
+                  <div className="bg-red-500/20 backdrop-blur-md border border-red-400/40 rounded-lg p-3 text-sm text-white shadow-lg">
                     ⚠️ {error}
                   </div>
                 )}
@@ -261,22 +261,22 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           {result && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2 text-white">
                   <CheckCircle2 className="w-4 h-4 text-green-400" />
                   Step 3: Success! Here's Your Data
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white/80">
                   Payment verified! Below is the API response with your requested data.
                 </p>
               </div>
 
-              <div className="bg-green-500/10 border border-green-400/30 rounded-lg p-3 text-sm text-green-100">
+              <div className="bg-green-500/20 backdrop-blur-md border border-green-400/40 rounded-lg p-3 text-sm text-white shadow-lg">
                 ✅ Payment successful! The API has processed your request.
               </div>
 
               <div className="space-y-2">
-                <div className="text-sm font-semibold">API Response:</div>
-                <pre className="max-h-64 overflow-auto bg-black/40 border border-white/10 rounded-md p-3 text-xs font-mono">
+                <div className="text-sm font-semibold text-white">API Response:</div>
+                <pre className="max-h-64 overflow-auto bg-black/60 backdrop-blur-md border border-white/20 rounded-md p-3 text-xs font-mono text-green-400 shadow-xl">
                   {JSON.stringify(result, null, 2)}
                 </pre>
               </div>
@@ -290,11 +290,11 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           </TabsContent>
 
           <TabsContent value="api-key" className="space-y-4">
-            <div className="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-4 text-sm space-y-3">
-              <p className="text-cyan-100">
+            <div className="bg-cyan-500/20 backdrop-blur-md border border-cyan-400/40 rounded-lg p-4 text-sm space-y-3 shadow-lg">
+              <p className="text-white">
                 <strong>⚡ Use API Keys for Production:</strong>
               </p>
-              <ul className="text-cyan-100 space-y-1 ml-4 list-disc">
+              <ul className="text-white space-y-1 ml-4 list-disc">
                 <li>No manual payment per request</li>
                 <li>Pay from prepaid balance</li>
                 <li>Perfect for apps and scripts</li>
@@ -302,7 +302,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
               </ul>
             </div>
 
-            <div className="bg-black/40 rounded-lg p-4 space-y-2">
+            <div className="bg-black/60 backdrop-blur-md border border-white/20 rounded-lg p-4 space-y-2 shadow-xl">
               <code className="text-xs text-green-400 block">
                 # Example with API Key
               </code>
@@ -315,25 +315,25 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/80">
                 Get started with API keys:
               </p>
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
                   <span className="text-cyan-400 font-bold">1.</span>
-                  <span className="text-sm">Connect your wallet and create an account</span>
+                  <span className="text-sm text-white">Connect your wallet and create an account</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-cyan-400 font-bold">2.</span>
-                  <span className="text-sm">Deposit funds (no minimum required)</span>
+                  <span className="text-sm text-white">Deposit funds (no minimum required)</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-cyan-400 font-bold">3.</span>
-                  <span className="text-sm">Generate an API key in your dashboard</span>
+                  <span className="text-sm text-white">Generate an API key in your dashboard</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-cyan-400 font-bold">4.</span>
-                  <span className="text-sm">Use it in your app - balance deducts automatically</span>
+                  <span className="text-sm text-white">Use it in your app - balance deducts automatically</span>
                 </div>
               </div>
             </div>
