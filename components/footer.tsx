@@ -75,6 +75,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <a href="https://www.x402.org/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                  x402 Spec
+                </a>
+              </li>
+              <li>
                 <a href="https://github.com/JermWang/PingPay" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   GitHub
                 </a>
