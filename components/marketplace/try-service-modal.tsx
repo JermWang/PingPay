@@ -24,7 +24,22 @@ type QuoteState = {
 } | null
 
 const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v') // USDC on mainnet
-const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com'
+
+// Get RPC endpoints - prioritize custom RPC from env, then fallbacks
+const getRpcEndpoints = () => {
+  const endpoints = []
+  if (process.env.NEXT_PUBLIC_SOLANA_RPC_URL) {
+    endpoints.push(process.env.NEXT_PUBLIC_SOLANA_RPC_URL)
+  }
+  // Fallback public RPCs
+  endpoints.push(
+    'https://solana-mainnet.g.alchemy.com/v2/demo',
+    'https://solana-api.projectserum.com',
+    'https://rpc.ankr.com/solana',
+    'https://solana-mainnet.rpc.extrnode.com'
+  )
+  return endpoints
+}
 
 export function TryServiceModal({ service }: TryServiceModalProps) {
   const { publicKey, sendTransaction } = useWallet()
@@ -104,6 +119,25 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
     }
   }
 
+  // Helper to get a working RPC connection
+  const getConnection = async (): Promise<Connection> => {
+    const endpoints = getRpcEndpoints()
+    // Try each RPC endpoint until one works
+    for (const rpcUrl of endpoints) {
+      try {
+        const conn = new Connection(rpcUrl, 'confirmed')
+        // Test the connection
+        await conn.getLatestBlockhash('finalized')
+        console.log('✅ Connected to RPC:', rpcUrl.includes('helius') ? 'Helius (Premium)' : rpcUrl.split('/')[2])
+        return conn
+      } catch (err) {
+        console.warn('❌ RPC failed:', rpcUrl.split('/')[2], err)
+        continue
+      }
+    }
+    throw new Error('All RPC endpoints failed. Please try again.')
+  }
+
   const handleWalletPayment = async () => {
     if (!publicKey || !quote || !sendTransaction) return
     
@@ -111,7 +145,8 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
       setLoading(true)
       setError(null)
 
-      const connection = new Connection(RPC_URL, 'confirmed')
+      // Get a working connection
+      const connection = await getConnection()
       const recipientPubkey = new PublicKey(quote.address)
 
       let txSignature: string
@@ -134,18 +169,25 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           )
         )
 
-        const { blockhash } = await connection.getLatestBlockhash()
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('finalized')
         transaction.recentBlockhash = blockhash
         transaction.feePayer = publicKey
 
-        txSignature = await sendTransaction(transaction, connection)
+        txSignature = await sendTransaction(transaction, connection, {
+          skipPreflight: false,
+          preflightCommitment: 'confirmed'
+        })
         
         toast({
           title: "Transaction Sent",
           description: "Waiting for confirmation...",
         })
 
-        await connection.confirmTransaction(txSignature, 'confirmed')
+        await connection.confirmTransaction({
+          signature: txSignature,
+          blockhash,
+          lastValidBlockHeight
+        }, 'confirmed')
 
       } else {
         // SOL Transfer
@@ -159,18 +201,25 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
           })
         )
 
-        const { blockhash } = await connection.getLatestBlockhash()
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('finalized')
         transaction.recentBlockhash = blockhash
         transaction.feePayer = publicKey
 
-        txSignature = await sendTransaction(transaction, connection)
+        txSignature = await sendTransaction(transaction, connection, {
+          skipPreflight: false,
+          preflightCommitment: 'confirmed'
+        })
         
         toast({
           title: "Transaction Sent",
           description: "Waiting for confirmation...",
         })
 
-        await connection.confirmTransaction(txSignature, 'confirmed')
+        await connection.confirmTransaction({
+          signature: txSignature,
+          blockhash,
+          lastValidBlockHeight
+        }, 'confirmed')
       }
 
       // Now verify with the API
