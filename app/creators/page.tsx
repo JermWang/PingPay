@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { Plus, TrendingUp, DollarSign, Activity, Clock, Users, Zap } from "lucide-react"
 import { GlowButton } from "@/components/shared/GlowButton"
-import { CreateApiModal } from "@/components/creators/create-api-modal"
+import { CreateApiModalEnhanced } from "@/components/creators/create-api-modal-enhanced"
 import { ApiListItem } from "@/components/creators/api-list-item"
 import type { Service, Creator } from "@/lib/types"
 
@@ -262,7 +262,7 @@ export default function CreatorsPage() {
 
       {/* Create API Modal */}
       {creator && (
-        <CreateApiModal
+        <CreateApiModalEnhanced
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           creatorId={creator.id}

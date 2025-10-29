@@ -60,79 +60,114 @@ export function ServiceCard({ service, showCreator = true }: ServiceCardProps) {
   }
 
   return (
-    <GlassPanel className="p-6 glass-hover reflective-overlay transition-transform duration-300 hover:-translate-y-0.5">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="text-xs">
-            {service.category}
-          </Badge>
-          {service.verified && (
-            <div className="flex items-center gap-1 bg-[#14F195]/20 text-[#14F195] px-2 py-1 rounded-full text-xs">
-              <Shield className="w-3 h-3" />
-              <span>Verified</span>
+    <div className="group relative">
+      {/* Glow effect on hover */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#9945FF] to-[#14F195] rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
+      
+      <GlassPanel className="relative p-6 glass-hover reflective-overlay transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#9945FF]/20 h-full flex flex-col">
+        {/* Header with badges and price */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary" className="text-xs font-medium bg-white/10 border-white/20">
+              {service.category}
+            </Badge>
+            {service.verified && (
+              <div className="flex items-center gap-1 bg-[#14F195]/20 text-[#14F195] px-2.5 py-1 rounded-full text-xs font-medium border border-[#14F195]/30">
+                <Shield className="w-3 h-3" />
+                <span>Verified</span>
+              </div>
+            )}
+            {service.featured && (
+              <div className="flex items-center gap-1 bg-[#9945FF]/20 text-[#9945FF] px-2.5 py-1 rounded-full text-xs font-medium border border-[#9945FF]/30 animate-pulse">
+                <Zap className="w-3 h-3" />
+                <span>Featured</span>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold bg-gradient-to-r from-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
+                ${service.price_usd.toFixed(3)}
+              </span>
+            </div>
+            <span className="text-xs text-gray-500">per request</span>
+          </div>
+        </div>
+
+        {/* Title and description */}
+        <h3 className="font-bold text-xl mb-2 text-white group-hover:text-[#14F195] transition-colors">
+          {service.name}
+        </h3>
+        <p className="text-sm text-gray-400 mb-4 line-clamp-2 flex-grow">
+          {service.description}
+        </p>
+
+        {/* Rating and stats row */}
+        <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+          {stats && stats.total_reviews > 0 ? (
+            <RatingDisplay rating={stats.avg_rating} totalReviews={stats.total_reviews} size="sm" />
+          ) : (
+            <span className="text-xs text-gray-500">No reviews yet</span>
+          )}
+          
+          {stats && stats.total_calls > 0 && (
+            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#14F195] animate-pulse" />
+              <span className="font-medium">{stats.total_calls.toLocaleString()}</span>
+              <span>calls</span>
             </div>
           )}
-          {service.featured && (
-            <div className="flex items-center gap-1 bg-[#9945FF]/20 text-[#9945FF] px-2 py-1 rounded-full text-xs">
+        </div>
+
+        {/* Creator attribution */}
+        {showCreator && creator && (
+          <Link
+            href={`/creators/${creator.wallet_address}`}
+            className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#14F195] transition-colors mb-4 group/creator"
+          >
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#9945FF] to-[#14F195] flex items-center justify-center group-hover/creator:scale-110 transition-transform">
+              <User className="w-3 h-3 text-white" />
+            </div>
+            <span className="font-medium">
+              {creator.display_name || `${creator.wallet_address.slice(0, 8)}...`}
+            </span>
+          </Link>
+        )}
+
+        {/* Free tier badge */}
+        {service.free_tier_limit && service.free_tier_limit > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 px-3 py-2 rounded-lg border border-green-500/30">
               <Zap className="w-3 h-3" />
-              <span>Featured</span>
+              <span className="font-medium">
+                {service.free_tier_limit} free {service.free_tier_period} calls
+              </span>
             </div>
-          )}
+          </div>
+        )}
+
+        {/* Endpoint display */}
+        <div className="bg-black/40 rounded-lg p-3 mb-4 flex items-center justify-between border border-white/10 group-hover:border-[#14F195]/30 transition-colors">
+          <code className="text-xs font-mono text-gray-300 truncate flex-1 mr-2">
+            {service.endpoint}
+          </code>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleCopy} 
+            className="h-7 w-7 p-0 hover:bg-[#14F195]/20 transition-colors flex-shrink-0"
+          >
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-green-500" />
+            ) : (
+              <Copy className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#14F195]" />
+            )}
+          </Button>
         </div>
-        <div className="flex items-center gap-1 text-primary font-bold">
-          <span className="text-lg">${service.price_usd.toFixed(2)}</span>
-          <span className="text-xs text-muted-foreground">/req</span>
-        </div>
-      </div>
 
-      <h3 className="font-bold text-lg mb-2">{service.name}</h3>
-      <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
-
-      {/* Rating Display */}
-      {stats && stats.total_reviews > 0 && (
-        <div className="mb-3">
-          <RatingDisplay rating={stats.avg_rating} totalReviews={stats.total_reviews} size="sm" />
-        </div>
-      )}
-
-      {/* Usage Stats */}
-      {stats && stats.total_calls > 0 && (
-        <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
-          <span>{stats.total_calls.toLocaleString()} calls</span>
-          {service.total_users && service.total_users > 0 && (
-            <span>• {service.total_users} users</span>
-          )}
-        </div>
-      )}
-
-      {/* Creator Attribution */}
-      {showCreator && creator && (
-        <Link
-          href={`/creators/${creator.wallet_address}`}
-          className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#14F195] transition-colors mb-3"
-        >
-          <User className="w-3 h-3" />
-          <span>by {creator.display_name || `${creator.wallet_address.slice(0, 8)}...`}</span>
-        </Link>
-      )}
-
-      {/* Free Tier Badge */}
-      {service.free_tier_limit && service.free_tier_limit > 0 && (
-        <div className="mb-3">
-          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
-            {service.free_tier_limit} free {service.free_tier_period} calls
-          </span>
-        </div>
-      )}
-
-      <div className="bg-white/5 rounded-lg p-3 mb-4 flex items-center justify-between border border-white/10">
-        <code className="text-xs font-mono text-foreground">{service.endpoint}</code>
-        <Button variant="ghost" size="sm" onClick={handleCopy} className="h-6 w-6 p-0">
-          {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
-        </Button>
-      </div>
-
-      <TryServiceModal service={service} />
-    </GlassPanel>
+        {/* CTA Button */}
+        <TryServiceModal service={service} />
+      </GlassPanel>
+    </div>
   )
 }
