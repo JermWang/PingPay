@@ -5,6 +5,10 @@ import { ServiceCard } from "@/components/marketplace/service-card"
 import type { Service, ServiceStats } from "@/lib/types"
 import type { FilterState } from "./marketplace-filters"
 
+interface ServiceGridProps {
+  filters: FilterState
+}
+
 export function ServiceGrid({ filters }: ServiceGridProps) {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
@@ -27,10 +31,6 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
     }
     load()
   }, [])
-
-interface ServiceGridProps {
-  filters: FilterState
-}
 
   // Filter and sort services
   const filteredServices = useMemo(() => {

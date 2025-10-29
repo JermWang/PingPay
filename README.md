@@ -15,7 +15,7 @@ pnpm install
 ```
 
 ### 2) Configure env
-See `ENV_SETUP.md` for all variables. Minimum:
+Create `.env.local` with these required variables:
 ```env
 NEXT_PUBLIC_SOLANA_NETWORK=devnet
 NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
