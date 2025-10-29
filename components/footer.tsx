@@ -90,7 +90,7 @@ export function Footer() {
           <div>
             <div className="font-semibold mb-4">Connect</div>
             <div className="flex gap-4">
-              <a href="#" className="text-muted-foreground hover:text-foreground">
+              <a href="https://github.com/JermWang/PingPay" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                 <Github className="w-5 h-5" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-foreground">

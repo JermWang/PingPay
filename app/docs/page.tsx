@@ -154,7 +154,9 @@ if (response.status === 402) {
                 Discord
               </a>
               <a
-                href="#"
+                href="https://github.com/JermWang/PingPay"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-6 py-2 bg-white/5 border border-white/10 rounded-lg hover:border-[#14F195]/50 transition-colors"
               >
                 GitHub
