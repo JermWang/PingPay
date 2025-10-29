@@ -77,21 +77,51 @@ export async function verifyTransaction(
       return false
     }
 
-    // Connect to Solana RPC
-    const connection = new Connection(SOLANA_RPC_URL, "confirmed")
+    // Try multiple RPCs for reliability (env first)
+    const rpcCandidates = Array.from(new Set([
+      SOLANA_RPC_URL,
+      "https://api.mainnet-beta.solana.com",
+      "https://rpc.ankr.com/solana",
+      "https://solana-api.projectserum.com",
+    ])).filter(Boolean)
+
+    let connection: Connection | null = null
+    let usedRpc = ""
+    for (const rpcUrl of rpcCandidates) {
+      try {
+        const conn = new Connection(rpcUrl, "confirmed")
+        await conn.getLatestBlockhash("confirmed")
+        connection = conn
+        usedRpc = rpcUrl
+        break
+      } catch {
+        continue
+      }
+    }
+    if (!connection) {
+      console.error("[x402] No working RPC endpoint found")
+      return false
+    }
     
     console.log("[x402] Verifying transaction:", {
       signature: transactionSignature,
       expectedAmountUsd,
       expectedRecipient,
-      rpcUrl: SOLANA_RPC_URL,
+      rpcUrl: usedRpc,
     })
 
     // Fetch transaction details
-    const transaction = await connection.getTransaction(transactionSignature, {
+    let transaction = await connection.getTransaction(transactionSignature, {
       commitment: "confirmed",
       maxSupportedTransactionVersion: 0,
     })
+    if (!transaction) {
+      // Try again at higher commitment
+      transaction = await connection.getTransaction(transactionSignature, {
+        commitment: "finalized",
+        maxSupportedTransactionVersion: 0,
+      })
+    }
 
     if (!transaction) {
       console.error("[x402] Transaction not found on-chain")
@@ -164,8 +194,22 @@ export async function verifyTransaction(
 
     // Fallback: verify native SOL transfer to recipient
     try {
-      const accountKeys: string[] = ((transaction.transaction as any)?.message?.accountKeys || [])
-        .map((k: any) => (typeof k === "string" ? k : k?.toBase58?.() || k?.pubkey?.toBase58?.() || String(k)))
+      // Robust extraction of account keys across legacy and v0
+      const txAny: any = transaction.transaction
+      const legacyKeys: any[] = txAny?.message?.accountKeys || []
+      const v0Keys: any[] = txAny?.message?.staticAccountKeys || []
+      let accountKeys: string[] = []
+      if (legacyKeys.length) {
+        accountKeys = legacyKeys.map((k: any) => (k?.toBase58?.() || k?.pubkey?.toBase58?.() || String(k)))
+      } else if (v0Keys.length) {
+        accountKeys = v0Keys.map((k: any) => (k?.toBase58?.() || k?.pubkey?.toBase58?.() || String(k)))
+      } else if (typeof txAny?.message?.getAccountKeys === "function") {
+        try {
+          const ak = txAny.message.getAccountKeys({ allowLookup: true })
+          const statics: any[] = ak?.staticAccountKeys || []
+          accountKeys = statics.map((k: any) => (k?.toBase58?.() || String(k)))
+        } catch {}
+      }
 
       const recipientIndex = accountKeys.findIndex((k) => k === recipientPubkey.toBase58())
       if (recipientIndex === -1) {
