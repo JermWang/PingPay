@@ -33,22 +33,72 @@ pnpm dev                      # local
 pnpm build && pnpm start      # production
 ```
 
-## x402 Flow (HTTP)
+## Authentication Methods
+
+### 1. API Keys (Recommended for Production)
+Prepaid balance system with API keys for seamless integration:
+
+```bash
+# 1. Create account and deposit funds via UI
+# 2. Generate API key in dashboard
+# 3. Use it in your requests
+curl -H "Authorization: Bearer pp_live_xxx" \
+  https://yourapp.com/api/solana/balance?address=xxx
+```
+
+**Benefits:**
+- No manual payment per request
+- Track usage in dashboard
+- Perfect for apps and automation
+- Automatic balance deduction
+
+### 2. HTTP 402 (x402) - One-Time Payments
+For anonymous or one-off API calls:
+
 1) Call protected endpoint → 402 with quote headers (amount, address, quote_id, expires)
 2) Pay USDC on Solana
 3) Replay request with `X-Quote-Id` and `X-Transaction-Signature`
 4) Server verifies on‑chain and returns data
 
-## Endpoints
-- `/api/solana/balance`
-- `/api/solana/tokens`
-- `/api/solana/transactions`
-- `/api/solana/nft`
-- `/api/solana/validator`
+## API Endpoints
+
+### Protected Endpoints (require authentication)
+- `/api/solana/balance` - Get SOL balance
+- `/api/solana/tokens` - List token accounts
+- `/api/solana/transactions` - Get transaction history
+- `/api/solana/nft` - NFT metadata
+- `/api/solana/validator` - Validator information
+
+### Account Management
+- `/api/account/balance` - Get account balance
+- `/api/account/deposit` - Initiate deposit
+- `/api/account/deposit/verify` - Verify deposit transaction
+- `/api/account/transactions` - Transaction history
+- `/api/account/keys` - Manage API keys
+
+### Creator Endpoints
+- `/api/creators/earnings` - View earnings
+- `/api/creators/earnings/withdraw` - Request withdrawal
+
+## Developer Workflow
+
+1. **Connect Wallet** - Use Phantom, Solflare, or any Solana wallet
+2. **Deposit Funds** - Add USDC to your account (no minimum)
+3. **Generate API Key** - Create keys in your dashboard
+4. **Integrate** - Use API keys in your applications
+5. **Monitor** - Track usage and spending in real-time
+
+## Creator Workflow
+
+1. **Register** - Connect wallet and create creator profile
+2. **Publish APIs** - List your services on the marketplace
+3. **Earn** - Get paid automatically when users call your APIs
+4. **Withdraw** - Request payouts (minimum $10)
 
 ## Notes
 - All mock/dev code has been removed. The app uses Supabase exclusively in production.
 - Marketplace services load from Supabase via `/api/services`.
+- Run SQL scripts in order (01-05) to set up all tables.
 
 ## License
 MIT

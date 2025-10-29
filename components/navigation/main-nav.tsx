@@ -5,11 +5,14 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
+import { useWallet } from "@solana/wallet-adapter-react"
 import { cn } from "@/lib/utils"
+import { BalanceIndicator } from "./balance-indicator"
 
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/marketplace", label: "Marketplace" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/creators", label: "Creator Dashboard" },
   { href: "/docs", label: "Docs" },
 ]
@@ -17,6 +20,7 @@ const navItems = [
 export function MainNav() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
+  const { publicKey } = useWallet()
 
   useEffect(() => {
     setMounted(true)
@@ -56,13 +60,18 @@ export function MainNav() {
             ))}
           </div>
 
-          {/* Wallet Connect Button (client-only to avoid hydration mismatch) */}
-          <div className="wallet-adapter-button-trigger">
-            {mounted ? (
-              <WalletMultiButton />
-            ) : (
-              <div className="h-9 w-36 rounded-md bg-white/10" aria-hidden />
+          {/* Balance & Wallet */}
+          <div className="flex items-center gap-4">
+            {mounted && publicKey && (
+              <BalanceIndicator walletAddress={publicKey.toBase58()} />
             )}
+            <div className="wallet-adapter-button-trigger">
+              {mounted ? (
+                <WalletMultiButton />
+              ) : (
+                <div className="h-9 w-36 rounded-md bg-white/10" aria-hidden />
+              )}
+            </div>
           </div>
         </div>
       </div>

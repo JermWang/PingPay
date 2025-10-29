@@ -153,3 +153,58 @@ export interface ValidatorInfo {
   epochCredits?: Array<[number, number, number]>
   epochVoteAccount?: boolean
 }
+
+// Prepaid Balance System Types
+
+export interface UserAccount {
+  wallet_address: string
+  balance_usd: number
+  total_deposited: number
+  total_spent: number
+  created_at: string
+  updated_at: string
+}
+
+export interface ApiKey {
+  id: string
+  user_wallet: string
+  key_hash: string
+  key_prefix: string
+  name?: string
+  is_active: boolean
+  last_used_at?: string
+  created_at: string
+}
+
+export interface AccountTransaction {
+  id: string
+  user_wallet: string
+  type: 'deposit' | 'spend' | 'refund'
+  amount_usd: number
+  service_id?: string
+  api_key_id?: string
+  description?: string
+  transaction_signature?: string
+  created_at: string
+}
+
+export interface CreatorEarnings {
+  creator_id: string
+  available_balance: number
+  total_earned: number
+  total_withdrawn: number
+  last_withdrawal_at?: string
+  updated_at: string
+}
+
+export interface WithdrawalRequest {
+  id: string
+  creator_id: string
+  amount_usd: number
+  wallet_address: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  transaction_signature?: string
+  error_message?: string
+  created_at: string
+  processed_at?: string
+}

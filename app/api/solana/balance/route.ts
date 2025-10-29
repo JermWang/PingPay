@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { withX402Protection } from "@/lib/x402-middleware"
+import { withX402ProtectionV2 } from "@/lib/x402-middleware-v2"
 import { getSolanaBalance } from "@/lib/solana-client"
 
 export async function GET(request: NextRequest) {
-  return withX402Protection(
+  return withX402ProtectionV2(
     request,
     async (req) => {
       const { searchParams } = new URL(req.url)

@@ -372,7 +372,7 @@ export async function updateServiceStats(serviceId: string, updates: Partial<Ser
  */
 export async function logUsage(
   serviceId: string,
-  paymentId: string,
+  paymentId: string | null,
   requestPath: string,
   responseStatus: number
 ): Promise<void> {

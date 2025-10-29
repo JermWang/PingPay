@@ -82,8 +82,8 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
 
   return (
     <section>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold mb-2">Available APIs</h2>
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold mb-2">Available APIs</h2>
         <p className="text-muted-foreground">
           {filteredServices.length} {filteredServices.length === 1 ? "service" : "services"} found • Pay only for what you use
         </p>
@@ -107,7 +107,7 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
         <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-12 text-center backdrop-blur-xl bg-white/5 border border-white/10">
           <p className="text-gray-400 text-lg">No APIs found matching your filters</p>
           <p className="text-gray-500 text-sm mt-2">Try adjusting your search or filter criteria</p>
-        </div>
+      </div>
       )}
     </section>
   )
