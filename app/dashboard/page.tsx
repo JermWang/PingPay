@@ -223,7 +223,7 @@ export default function DashboardPage() {
             </div>
             <Dialog open={createKeyOpen} onOpenChange={setCreateKeyOpen}>
               <DialogTrigger asChild>
-                <GlowButton label="Create Key" icon={Plus} />
+                <GlowButton label="Create Key" />
               </DialogTrigger>
               <DialogContent className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <DialogHeader>
@@ -328,12 +328,14 @@ export default function DashboardPage() {
         </GlassPanel>
       </div>
 
-      <DepositModal
-        open={depositOpen}
-        onOpenChange={setDepositOpen}
-        walletAddress={walletAddress}
-        onSuccess={fetchDashboardData}
-      />
+      {walletAddress && (
+        <DepositModal
+          open={depositOpen}
+          onOpenChange={setDepositOpen}
+          walletAddress={walletAddress}
+          onSuccess={fetchDashboardData}
+        />
+      )}
     </div>
   )
 }

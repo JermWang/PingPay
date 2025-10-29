@@ -212,12 +212,11 @@ export default function CreatorEarningsPage() {
             </div>
             <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
               <DialogTrigger asChild>
-                <GlowButton
-                  label="Withdraw"
-                  icon={Download}
-                  disabled={!canWithdraw}
-                  className="w-full"
-                />
+              <GlowButton
+                label="Withdraw"
+                disabled={!canWithdraw}
+                className="w-full"
+              />
               </DialogTrigger>
               <DialogContent className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <DialogHeader>

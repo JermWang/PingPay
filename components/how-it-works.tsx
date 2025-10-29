@@ -40,36 +40,36 @@ export function HowItWorks() {
   ]
 
   return (
-    <section id="how-it-works" className="-mt-8 md:-mt-16 pb-8 md:pb-12">
+    <section id="how-it-works" className="-mt-16 pb-2">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-6 md:mb-8">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4">How It Works</h2>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-2 sm:px-0">Four simple steps from request to resource</p>
+        <div className="text-center mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">How It Works</h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Four simple steps from request to resource</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 md:gap-4 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 gap-4 max-w-3xl mx-auto">
           {steps.map((step, index) => (
             <div 
               key={index} 
-              className="glass-panel glass-outline reflective-overlay p-3 md:p-4 relative rounded-xl md:rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+              className="glass-panel glass-outline reflective-overlay p-4 relative rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
             >
-              <div className={`w-9 md:w-10 h-9 md:h-10 rounded-full ${step.bgColor} backdrop-blur-sm flex items-center justify-center mb-2 md:mb-3 border border-white/10`}>
-                <step.icon className={`w-4 md:w-5 h-4 md:h-5 ${step.color}`} />
+              <div className={`w-10 h-10 rounded-full ${step.bgColor} backdrop-blur-sm flex items-center justify-center mb-3 border border-white/10`}>
+                <step.icon className={`w-5 h-5 ${step.color}`} />
               </div>
 
-              <h3 className="text-lg md:text-xl font-semibold mb-1">{step.title}</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3">{step.description}</p>
+              <h3 className="text-xl font-semibold mb-1">{step.title}</h3>
+              <p className="text-sm text-muted-foreground mb-3">{step.description}</p>
 
-              <div className="bg-background/50 rounded-lg p-2 md:p-3 font-mono text-[10px] sm:text-xs overflow-x-auto">
+              <div className="bg-background/50 rounded-lg p-3 font-mono text-xs">
                 <pre className="whitespace-pre-wrap leading-snug">{step.code}</pre>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-6 md:mt-8 text-center px-4">
-          <div className="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full bg-primary/10 border border-primary/20">
-            <span className="text-xs sm:text-sm font-medium">All payments verified on-chain in under 1 second</span>
+        <div className="mt-8 text-center">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 border border-primary/20">
+            <span className="text-sm font-medium">All payments verified on-chain in under 1 second</span>
           </div>
         </div>
       </div>

@@ -35,11 +35,11 @@ export async function withX402ProtectionV2(
     // Check for API key in Authorization header
     const authHeader = request.headers.get("Authorization")
     if (authHeader?.startsWith("Bearer ")) {
-      return await handleApiKeyAuth(request, handler, service, authHeader)
+      return await handleApiKeyAuth(request, handler, service, authHeader, endpoint)
     }
 
     // Fall back to x402 flow
-    return await handleX402Auth(request, handler, service)
+    return await handleX402Auth(request, handler, service, endpoint)
   } catch (error) {
     console.error("[x402-v2] Middleware error:", error)
     return NextResponse.json(
@@ -59,7 +59,8 @@ async function handleApiKeyAuth(
   request: NextRequest,
   handler: (request: NextRequest) => Promise<Response>,
   service: any,
-  authHeader: string
+  authHeader: string,
+  endpoint: string
 ) {
   const apiKey = authHeader.replace("Bearer ", "").trim()
 
@@ -136,7 +137,8 @@ async function handleApiKeyAuth(
 async function handleX402Auth(
   request: NextRequest,
   handler: (request: NextRequest) => Promise<Response>,
-  service: any
+  service: any,
+  endpoint: string
 ) {
   // Check for transaction signature in headers
   const transactionSignature = getTransactionSignature(request)
