@@ -91,7 +91,12 @@ export default function DashboardPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      setCreatedKey(data.data)
+      // Extract plain_key and create the expected format
+      const { plain_key, ...apiKey } = data.data
+      setCreatedKey({
+        apiKey,
+        plainKey: plain_key
+      })
       setNewKeyName("")
       setCreateKeyOpen(false)
       fetchDashboardData()
