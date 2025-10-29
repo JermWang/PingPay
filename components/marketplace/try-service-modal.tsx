@@ -105,7 +105,7 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
       <DialogTrigger asChild>
         <GlowButton label="Try Now" className="w-full" />
       </DialogTrigger>
-      <DialogContent className="glass-panel glass-outline reflective-overlay p-4 sm:p-6 max-h-[calc(100dvh-2rem)] overflow-y-auto">
+      <DialogContent className="glass-panel glass-outline reflective-overlay p-4 sm:p-6 max-h-[80vh] sm:max-h-[85vh] overflow-y-auto !top-[50%] !translate-y-[-50%]">
         <DialogHeader>
           <DialogTitle>{service.name}</DialogTitle>
           <DialogDescription>{service.description}</DialogDescription>
