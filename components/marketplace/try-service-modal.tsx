@@ -519,6 +519,11 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
             {paramError && (
               <div className="text-[11px] text-red-300">{paramError}</div>
             )}
+            <div className="text-[11px] text-amber-200 bg-amber-500/15 border border-amber-400/30 rounded-md p-2">
+              Warning: This field only changes what the API searches or looks up.
+              It does NOT change where to send funds. For payment, always send to the
+              Recipient Address shown below for this quote.
+            </div>
           </div>
 
           {/* Step 1: Initial Request */}
@@ -615,6 +620,10 @@ export function TryServiceModal({ service }: TryServiceModalProps) {
                       <CopyIcon className="w-3.5 h-3.5" />
                       <span className="text-[11px]">Copy</span>
                     </button>
+                  </div>
+                  <div className="text-[11px] text-amber-200 mt-1">
+                    Send funds ONLY to this address for this quote. The editable “Wallet Address” field above is for
+                    selecting what the API looks up, not the payment destination.
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-xs">
