@@ -37,7 +37,7 @@ export function Footer() {
               filter: "blur(12px)",
             }}
           />
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-4 gap-8 text-center md:text-left">
           <div>
             <div className="font-bold text-xl mb-4">Ping Pay</div>
             <p className="text-sm text-muted-foreground">
@@ -89,7 +89,7 @@ export function Footer() {
 
           <div>
             <div className="font-semibold mb-4">Connect</div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 justify-center md:justify-start">
               <a href="https://github.com/JermWang/PingPay" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                 <Github className="w-5 h-5" />
               </a>

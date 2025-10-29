@@ -5,7 +5,6 @@ import * as THREE from "three"
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber"
 import { useAnimations, Environment } from "@react-three/drei"
 import { EffectComposer, Bloom } from "@react-three/postprocessing"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
 
@@ -120,7 +119,6 @@ function SolanaModel({ scrollProgress }: { scrollProgress: number }) {
 export function Hero3DScene({ scrollProgress }: Hero3DSceneProps) {
   const [mounted, setMounted] = React.useState(false)
   const [hasWebGL, setHasWebGL] = React.useState(true)
-  const isMobile = useIsMobile()
 
   React.useEffect(() => {
     // Check for WebGL support
@@ -142,7 +140,7 @@ export function Hero3DScene({ scrollProgress }: Hero3DSceneProps) {
 
   return (
     <Canvas
-      dpr={isMobile ? 1 : 1.5}
+      dpr={1.5}
       gl={{ 
         antialias: true,
         alpha: false,
