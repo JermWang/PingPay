@@ -70,13 +70,13 @@ export function Footer() {
             <div className="font-semibold mb-4">Resources</div>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/docs#api-reference" className="text-muted-foreground hover:text-foreground">
-                  API Reference
+                <Link href="/docs" className="text-muted-foreground hover:text-foreground">
+                  Documentation
                 </Link>
               </li>
               <li>
                 <a href="https://github.com/JermWang/PingPay" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                  x402 Spec
+                  GitHub
                 </a>
               </li>
               <li>
