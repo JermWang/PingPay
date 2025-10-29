@@ -179,7 +179,6 @@ async function handleWalletAuth(
   if (!paymentSignature) {
     // Generate quote and return 402
     const quote = await generateQuote(service.id, service.price_usd)
-    quote.wallet_address = walletAddress // Associate quote with wallet
     await db.createQuote(quote)
     
     const response = create402Response(quote)
@@ -188,6 +187,7 @@ async function handleWalletAuth(
       headers: {
         ...Object.fromEntries(response.headers.entries()),
         "X-Wallet-Payment-Required": "true", // Signal that wallet can pay directly
+        "X-Wallet-Address": walletAddress, // Send wallet address for tracking
       },
     })
   }
