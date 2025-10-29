@@ -1,5 +1,5 @@
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js"
-import { getAssociatedTokenAddress } from "@solana/spl-token"
+import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { PAYMENT_RECEIVER_ADDRESS, QUOTE_EXPIRY_SECONDS, SOLANA_RPC_URL, USDC_MINT_ADDRESS } from "./constants"
 import type { Quote, X402Response } from "./types"
 
@@ -85,12 +85,18 @@ export async function generateQuote(serviceId: string, amountUsd: number, paymen
   let paymentAddress = PAYMENT_RECEIVER_ADDRESS
   
   if (paymentToken === 'USDC') {
-    // For USDC, derive the ATA from the receiver's wallet address
+    // For USDC, derive the ATA from the receiver's wallet address synchronously
     try {
       const receiverPubkey = new PublicKey(PAYMENT_RECEIVER_ADDRESS)
       const usdcMintPubkey = new PublicKey(USDC_MINT_ADDRESS)
-      const usdcAta = await getAssociatedTokenAddress(usdcMintPubkey, receiverPubkey)
-      paymentAddress = usdcAta.toBase58()
+      // getAssociatedTokenAddress is sync when no fetching needed
+      const usdcAta = getAssociatedTokenAddress(
+        usdcMintPubkey,
+        receiverPubkey,
+        false, // allowOwnerOffCurve
+        TOKEN_PROGRAM_ID
+      )
+      paymentAddress = (await usdcAta).toBase58()
       console.log('[x402] Generated USDC ATA for receiver wallet', PAYMENT_RECEIVER_ADDRESS, ':', paymentAddress)
     } catch (err) {
       console.error('[x402] Failed to derive USDC ATA, using wallet address:', err)
