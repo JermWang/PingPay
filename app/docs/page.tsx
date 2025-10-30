@@ -1,316 +1,314 @@
 import Link from "next/link"
-import { ArrowLeft, Code, Key, Zap, Shield } from "lucide-react"
+import { ArrowLeft, Code, Key, Zap, Shield, BookOpen, Rocket, DollarSign, Lock } from "lucide-react"
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
-      <div className="container mx-auto max-w-6xl px-4 py-12 relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-x-hidden">
+      {/* Subtle gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-green-500/5 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
         {/* Back Button */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8 group"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </Link>
 
         {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
+        <div className="mb-12 text-center">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-green-500/10 border border-purple-500/20 rounded-full px-4 py-1.5 mb-6">
+            <BookOpen className="w-4 h-4 text-purple-400" />
+            <span className="text-sm font-medium text-purple-200">Developer Documentation</span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
             Documentation
           </h1>
-          <p className="text-gray-400 text-lg">
-            Learn how to integrate Ping Pay's micropayment APIs into your applications
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Everything you need to integrate Ping Pay's micropayment APIs with Solana
           </p>
         </div>
 
-        {/* Quick Start */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#9945FF]/50 transition-colors">
-            <Code className="w-8 h-8 text-[#9945FF] mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Quick Start</h3>
-            <p className="text-sm text-gray-400">
-              Get started with Ping Pay in under 5 minutes
+        {/* Quick Navigation Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16">
+          <a href="#quick-start" className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
+            <Rocket className="w-8 h-8 text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2 text-white">Quick Start</h3>
+            <p className="text-sm text-slate-400">
+              Get up and running in 5 minutes
             </p>
-          </div>
+          </a>
 
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#14F195]/50 transition-colors">
-            <Key className="w-8 h-8 text-[#14F195] mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Authentication</h3>
-            <p className="text-sm text-gray-400">
-              Learn about x402 payment headers
+          <a href="#auth" className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6 hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+            <Key className="w-8 h-8 text-green-400 mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2 text-white">Authentication</h3>
+            <p className="text-sm text-slate-400">
+              x402 headers & API keys
             </p>
-          </div>
+          </a>
 
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#00FFA3]/50 transition-colors">
-            <Zap className="w-8 h-8 text-[#00FFA3] mb-4" />
-            <h3 className="text-lg font-semibold mb-2">API Reference</h3>
-            <p className="text-sm text-gray-400">
-              Complete API documentation
+          <a href="#creators" className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all">
+            <DollarSign className="w-8 h-8 text-cyan-400 mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2 text-white">For Creators</h3>
+            <p className="text-sm text-slate-400">
+              Monetize your own APIs
             </p>
-          </div>
+          </a>
 
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[#9945FF]/50 transition-colors">
-            <Shield className="w-8 h-8 text-[#9945FF] mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Best Practices</h3>
-            <p className="text-sm text-gray-400">
-              Security and optimization tips
+          <a href="#security" className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-xl p-6 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all">
+            <Lock className="w-8 h-8 text-orange-400 mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2 text-white">Security</h3>
+            <p className="text-sm text-slate-400">
+              Best practices & limits
             </p>
-          </div>
+          </a>
         </div>
 
         {/* Content Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8">
-          {/* Mini TOC */}
-          <aside className="hidden lg:block sticky top-24 self-start bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 h-max">
-            <div className="text-sm text-gray-400 font-semibold mb-2">On this page</div>
-            <nav className="text-sm space-y-2">
-              <a href="#overview" className="block text-gray-300 hover:text-white">Overview</a>
-              <a href="#quick-start" className="block text-gray-300 hover:text-white">Quick Start</a>
-              <a href="#auth" className="block text-gray-300 hover:text-white">Auth Methods</a>
-              <a href="#try-now" className="block text-gray-300 hover:text-white">Try Now</a>
-              <a href="#marketplace" className="block text-gray-300 hover:text-white">Marketplace</a>
-              <a href="#creators" className="block text-gray-300 hover:text-white">Creators</a>
-              <a href="#payouts" className="block text-gray-300 hover:text-white">Payouts & Withdrawals</a>
-              <a href="#security" className="block text-gray-300 hover:text-white">Security & Limits</a>
-              <a href="#troubleshooting" className="block text-gray-300 hover:text-white">Troubleshooting</a>
-              <a href="#faq" className="block text-gray-300 hover:text-white">FAQ</a>
-            </nav>
+        <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 lg:gap-10">
+          {/* Sidebar TOC */}
+          <aside className="hidden lg:block sticky top-6 self-start">
+            <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-xl p-5">
+              <div className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-4">On this page</div>
+              <nav className="space-y-2">
+                <a href="#overview" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">Overview</a>
+                <a href="#quick-start" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">Quick Start</a>
+                <a href="#auth" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">Auth Methods</a>
+                <a href="#endpoints" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">API Endpoints</a>
+                <a href="#creators" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">For Creators</a>
+                <a href="#payouts" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">Payouts</a>
+                <a href="#support" className="block text-sm text-slate-300 hover:text-purple-400 hover:translate-x-1 transition-all py-1">Support</a>
+              </nav>
+            </div>
           </aside>
 
-          <div className="space-y-12">
-            <section id="overview" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-              <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">Overview</h2>
-              <p className="text-gray-300">
+          <div className="space-y-10 lg:space-y-12 pb-12 overflow-hidden">
+            {/* Overview */}
+            <section id="overview" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 flex items-center gap-3">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Overview</span>
+              </h2>
+              <p className="text-slate-300 leading-relaxed">
                 Ping Pay lets you monetize APIs with Solana. Users can pay per request (x402), or use API keys with prepaid balance.
                 Our marketplace features creator-made APIs so creators earn revenue directly to their wallet.
               </p>
             </section>
+
           {/* How it Works */}
-          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">How It Works</h2>
-            <div className="prose prose-invert max-w-none">
-              <p className="text-gray-300 mb-4">
+            <section id="quick-start" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-cyan-400">How It Works</span>
+              </h2>
+              <p className="text-slate-300 mb-6 leading-relaxed">
                 Ping Pay uses the x402 payment protocol to enable micropayments for API requests. 
                 Here's how a typical request flow works:
               </p>
-              <ol className="space-y-2 text-gray-300">
-                <li>1. Client makes an API request without payment</li>
-                <li>2. Server responds with <code className="text-[#14F195] bg-white/10 px-2 py-1 rounded">402 Payment Required</code> and quote details</li>
-                <li>3. Client initiates Solana USDC payment</li>
-                <li>4. Client includes transaction signature in <code className="text-[#14F195] bg-white/10 px-2 py-1 rounded">x-transaction-signature</code> header</li>
-                <li>5. Server verifies payment and returns API response</li>
-              </ol>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">1</div>
+                  <p className="text-slate-300 pt-0.5">Client makes an API request without payment</p>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">2</div>
+                  <p className="text-slate-300 pt-0.5">Server responds with <code className="text-green-400 bg-slate-900/50 px-2 py-0.5 rounded text-sm">402 Payment Required</code> and quote details</p>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">3</div>
+                  <p className="text-slate-300 pt-0.5">Client initiates Solana SOL or USDC payment</p>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">4</div>
+                  <p className="text-slate-300 pt-0.5">Client includes transaction signature in <code className="text-green-400 bg-slate-900/50 px-2 py-0.5 rounded text-sm">x-transaction-signature</code> header</p>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">5</div>
+                  <p className="text-slate-300 pt-0.5">Server verifies payment and returns API response</p>
+                </div>
             </div>
           </section>
 
-          {/* API Endpoints with Examples */}
-          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#14F195]">API Endpoints (with Examples)</h2>
-            <p className="text-gray-300 mb-6">
-              Replace <code className="bg-white/10 px-1 rounded">YOUR_WALLET_ADDRESS</code> (or <code className="bg-white/10 px-1 rounded">YOUR_VOTE_ACCOUNT</code>) with your own values. For paid endpoints, use an API key or x402 headers after payment.
-            </p>
+            {/* API Endpoints */}
+            <section id="endpoints" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">API Endpoints</span>
+              </h2>
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-200">
+                  <span className="font-semibold">Note:</span> Replace <code className="bg-slate-900/50 px-1.5 py-0.5 rounded text-blue-300">YOUR_WALLET_ADDRESS</code> with your actual address. 
+                  For paid endpoints, use an API key or x402 headers.
+                </p>
+              </div>
 
-            <div className="space-y-8">
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-2">GET /api/solana/balance?address=...</h3>
-                <p className="text-gray-400 mb-3 text-sm">Returns the SOL balance for a wallet.</p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
-                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS`}</pre>
+              <div className="space-y-4">
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                  <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/balance</h3>
+                  <p className="text-slate-400 mb-3 text-sm">Returns SOL balance for a wallet</p>
+                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
+                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
                   </div>
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
-                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS"`}</pre>
+                </div>
+
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                  <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/tokens</h3>
+                  <p className="text-slate-400 mb-3 text-sm">Lists SPL tokens held by a wallet</p>
+                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
+                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  </div>
+                </div>
+
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                  <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/transactions</h3>
+                  <p className="text-slate-400 mb-3 text-sm">Recent transactions for a wallet</p>
+                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
+                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  </div>
+                </div>
+
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                  <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/nft</h3>
+                  <p className="text-slate-400 mb-3 text-sm">Fetch NFTs owned by a wallet</p>
+                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
+                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  </div>
+                </div>
+
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                  <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/validator</h3>
+                  <p className="text-slate-400 mb-3 text-sm">Validator info for a vote account</p>
+                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
+                    <pre className="text-xs text-green-300"><code>?vote_account=YOUR_VOTE_ACCOUNT</code></pre>
                   </div>
                 </div>
               </div>
+            </section>
 
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-2">GET /api/solana/tokens?address=...</h3>
-                <p className="text-gray-400 mb-3 text-sm">Lists SPL tokens held by a wallet.</p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
-                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS`}</pre>
-                  </div>
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
-                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS"`}</pre>
-                  </div>
+            {/* x402 Headers */}
+            <section id="auth" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">x402 Headers</span>
+              </h2>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-white">Standard Headers (402 Response)</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Payment-Required</code>
+                      <span>always "true" on 402</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Quote-Id</code>
+                      <span>unique quote identifier</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Amount-USD</code>
+                      <span>price for this request</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Solana-Address</code>
+                      <span>receiver address</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Expires-At</code>
+                      <span>ISO timestamp when quote expires</span>
+                    </li>
+                  </ul>
                 </div>
-              </div>
 
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-2">GET /api/solana/transactions?address=...</h3>
-                <p className="text-gray-400 mb-3 text-sm">Recent transactions for a wallet.</p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
-                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS`}</pre>
-                  </div>
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
-                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS"`}</pre>
-                  </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-white">Client Retry (After Paying)</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-green-300 shrink-0">X-Transaction-Signature</code>
+                      <span>Solana transaction signature</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-green-300 shrink-0">X-Quote-Id</code>
+                      <span>the same quote id you received</span>
+                    </li>
+                  </ul>
                 </div>
-              </div>
 
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-2">GET /api/solana/nft?address=...</h3>
-                <p className="text-gray-400 mb-3 text-sm">Fetch NFTs owned by a wallet.</p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
-                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS`}</pre>
-                  </div>
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
-                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS"`}</pre>
-                  </div>
+                <div className="border-t border-slate-700/50 pt-4">
+                  <p className="text-xs text-slate-400">
+                    Learn more about x402 at <a className="underline text-purple-400 hover:text-purple-300" href="https://www.x402.org/" target="_blank" rel="noreferrer">x402.org</a>
+                  </p>
                 </div>
-              </div>
-
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-2">GET /api/solana/validator?vote_account=...</h3>
-                <p className="text-gray-400 mb-3 text-sm">Validator info for a vote account.</p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Beginner (direct URL)</div>
-                    <pre className="text-gray-300">{`https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT`}</pre>
-                  </div>
-                  <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                    <div className="text-white/70 mb-2">Expert (curl with API key)</div>
-                    <pre className="text-gray-300">{`curl -H "Authorization: Bearer YOUR_API_KEY" "https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT"`}</pre>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-semibold mb-2">One‑Time Payment (x402) Headers</h3>
-                <p className="text-gray-400 mb-3 text-sm">After paying with SOL or USDC, include these headers to access without an API key.</p>
-                <div className="bg-black/50 rounded-lg p-4 font-mono text-xs overflow-x-auto">
-                  <pre className="text-gray-300">{`curl -H "X-Quote-Id: YOUR_QUOTE_ID" -H "X-Transaction-Signature: YOUR_SOLANA_TX_SIGNATURE" "https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS"`}</pre>
-                </div>
-                <p className="text-xs text-yellow-300 mt-2">Important: Replace the example address and placeholders with your own values.</p>
-              </div>
             </div>
           </section>
 
-          {/* x402 Headers (Standard + Extensions) */}
-          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">x402 Headers</h2>
-            <div className="space-y-6 text-gray-300">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Standard (spec)</h3>
-                <ul className="list-disc ml-5 space-y-1 text-sm">
-                  <li><code className="bg-white/10 px-1 rounded">X-Payment-Required</code>: always <code className="bg-white/10 px-1 rounded">true</code> on 402</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-Quote-Id</code>: unique quote identifier</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-Amount-USD</code>: price for this request</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-Solana-Address</code>: receiver address to send payment</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-Expires-At</code>: ISO timestamp when quote expires</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Client Retry (after paying)</h3>
-                <ul className="list-disc ml-5 space-y-1 text-sm">
-                  <li><code className="bg-white/10 px-1 rounded">X-Transaction-Signature</code>: Solana transaction signature</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-Quote-Id</code>: the same quote id you received</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2">PingPay Extensions</h3>
-                <ul className="list-disc ml-5 space-y-1 text-sm">
-                  <li><code className="bg-white/10 px-1 rounded">X-402-Version</code>: current protocol version (server)</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-402-Supported</code>: supported auth modes (e.g., signature,wallet,apikey)</li>
-                  <li><code className="bg-white/10 px-1 rounded">X-Wallet-Address</code>: provided by client if a wallet is connected</li>
-                </ul>
-              </div>
-
-              <p className="text-xs text-yellow-300">Tip: See <a className="underline" href="https://www.x402.org/" target="_blank" rel="noreferrer">x402.org</a> for the baseline spec.</p>
-            </div>
-          </section>
-
-          {/* Example Request */}
-          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#14F195]">Example Request</h2>
-            <div className="bg-black/50 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-              <pre className="text-gray-300">
-{`// Step 1: Initial request
-const response = await fetch('https://pingpay.app/api/solana/balance', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ address: 'YOUR_WALLET_ADDRESS' })
-});
-
-// Step 2: Handle 402 response
-if (response.status === 402) {
-  const quote = await response.json();
-  
-  // Step 3: Make payment on Solana
-  const signature = await makePayment(quote);
-  
-  // Step 4: Retry with signature
-  const paidResponse = await fetch('https://pingpay.app/api/solana/balance', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-transaction-signature': signature,
-      'x-quote-id': quote.quote_id
-    },
-    body: JSON.stringify({ address: 'YOUR_WALLET_ADDRESS' })
-  });
-  
-  const data = await paidResponse.json();
-  console.log(data);
-}`}
-              </pre>
-            </div>
-          </section>
-
-          {/* Creator API */}
-          <section id="creators" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#00FFA3]">For API Creators</h2>
-            <div className="prose prose-invert max-w-none">
-              <p className="text-gray-300 mb-4">
+            {/* For Creators */}
+            <section id="creators" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">For API Creators</span>
+              </h2>
+              <p className="text-slate-300 mb-6 leading-relaxed">
                 Want to monetize your own APIs? Connect your wallet and create an API in minutes:
               </p>
-              <ul className="space-y-2 text-gray-300">
-                <li>• Host your API anywhere (AWS, Vercel, your own server)</li>
-                <li>• Set your price per request</li>
-                <li>• Ping Pay handles payments and verification automatically</li>
-                <li>• Earn revenue in USDC directly to your wallet</li>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                  </div>
+                  <span className="text-slate-300">Host your API anywhere (AWS, Vercel, your own server)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                  </div>
+                  <span className="text-slate-300">Set your price per request</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                  </div>
+                  <span className="text-slate-300">Ping Pay handles payments and verification automatically</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                  </div>
+                  <span className="text-slate-300">Earn revenue in USDC directly to your wallet</span>
+                </li>
               </ul>
-              <div className="mt-6">
                 <Link
                   href="/creators"
-                  className="inline-block px-6 py-3 bg-gradient-to-r from-[#9945FF] to-[#14F195] rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all shadow-lg shadow-cyan-500/20"
                 >
                   Get Started as a Creator
                 </Link>
-              </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Payouts & Withdrawals */}
-          <section id="payouts" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#14F195]">Payouts & Withdrawals</h2>
-            <div className="prose prose-invert max-w-none">
-              <ol className="space-y-2 text-gray-300">
-                <li>1. Go to Creators → set your <strong>Payout Wallet</strong>. We’ll use this for withdrawals.</li>
-                <li>2. Earn revenue as users pay for your API calls (view earnings in your dashboard).</li>
-                <li>3. Request a withdrawal once you hit the minimum; we’ll send USDC to your payout wallet.</li>
-              </ol>
+            {/* Payouts */}
+            <section id="payouts" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Payouts & Withdrawals</span>
+              </h2>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-sm font-bold">1</div>
+                  <p className="text-slate-300 pt-0.5">Go to Creators → set your <strong>Payout Wallet</strong></p>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-sm font-bold">2</div>
+                  <p className="text-slate-300 pt-0.5">Earn revenue as users pay for your API calls</p>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-sm font-bold">3</div>
+                  <p className="text-slate-300 pt-0.5">Request a withdrawal; we'll send USDC to your payout wallet</p>
+                </div>
             </div>
           </section>
 
           {/* Support */}
-          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#9945FF]">Need Help?</h2>
-            <p className="text-gray-300 mb-4">
+            <section id="support" className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Need Help?</span>
+              </h2>
+              <p className="text-slate-300 mb-6">
               Join our community or reach out for support:
             </p>
             <div className="flex flex-wrap gap-4">
@@ -318,7 +316,7 @@ if (response.status === 402) {
                 href="https://github.com/JermWang/PingPay"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-2 bg-white/5 border border-white/10 rounded-lg hover:border-[#14F195]/50 transition-colors"
+                  className="px-6 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all font-medium"
               >
                 GitHub
               </a>
@@ -326,16 +324,15 @@ if (response.status === 402) {
                 href="https://x.com/PingPaySol"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-2 bg-white/5 border border-white/10 rounded-lg hover:border-[#14F195]/50 transition-colors"
+                  className="px-6 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all font-medium"
               >
                 Twitter
               </a>
             </div>
           </section>
-        </div>
+          </div>
         </div>
       </div>
     </div>
   )
 }
-
