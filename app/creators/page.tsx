@@ -174,7 +174,11 @@ export default function CreatorsPage() {
                 className="flex-1 bg-black/60 border-white/10 text-white"
                 placeholder="Your Solana wallet address"
               />
-              <GlowButton label={savingPayout ? 'Saving...' : 'Save'} onClick={savePayoutWallet} disabled={savingPayout} />
+              <GlowButton 
+                label={savingPayout ? 'Saving...' : 'Save'} 
+                onClick={savePayoutWallet} 
+                disabled={savingPayout || (creator?.payout_wallet === payoutWallet.trim())}
+              />
             </div>
             {payoutMsg && <div className="text-xs mt-2 text-gray-300">{payoutMsg}</div>}
           </div>

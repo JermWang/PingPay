@@ -40,8 +40,19 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Invalid wallet address format" }, { status: 400 })
     }
 
+    // Fetch current creator
+    const current = await SupabaseClient.getCreatorById(creatorId)
+    if (!current) {
+      return NextResponse.json({ error: "Creator not found" }, { status: 404 })
+    }
+
+    // If unchanged, return informational success (not an error)
+    if ((current as any).payout_wallet === payout_wallet) {
+      return NextResponse.json({ creator: current, message: "Payout wallet unchanged" })
+    }
+
     const updated = await SupabaseClient.updateCreatorPayoutWallet(creatorId, payout_wallet)
-    return NextResponse.json({ creator: updated })
+    return NextResponse.json({ creator: updated, message: "Payout wallet saved" })
   } catch (error) {
     console.error("[Creator Profile] PATCH Error:", error)
     return NextResponse.json(
