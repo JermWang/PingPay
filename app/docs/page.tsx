@@ -57,7 +57,7 @@ export default function DocsPage() {
               Complete reference for integrating Ping Pay's micropayment infrastructure with the x402 protocol on Solana.
             </p>
           </div>
-        </div>
+          </div>
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12">
@@ -87,7 +87,7 @@ export default function DocsPage() {
                   Support
                 </a>
               </nav>
-            </div>
+          </div>
           </aside>
 
           {/* Content */}
@@ -100,8 +100,8 @@ export default function DocsPage() {
                   Ping Pay enables micropayments for API requests using Solana blockchain. Users can authenticate via prepaid API keys 
                   or pay-per-request using the x402 protocol with SOL or USDC. Our marketplace features creator-made APIs where creators 
                   earn revenue directly to their wallet.
-                </p>
-              </div>
+            </p>
+          </div>
             </section>
 
             {/* Quick Start */}
@@ -129,13 +129,13 @@ export default function DocsPage() {
                   </div>
                   <h3 className="font-semibold text-slate-900 mb-2">3. Go Live</h3>
                   <p className="text-sm text-slate-600">Start building with instant, low-cost API access</p>
-                </div>
-              </div>
+          </div>
+        </div>
 
               <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 relative">
                 <CopyButton text={`curl -H "Authorization: Bearer YOUR_API_KEY" \\
   "https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS"`} />
-                <pre className="text-sm text-emerald-400 font-mono overflow-x-auto pr-12">
+                <pre className="text-xs sm:text-sm text-emerald-400 font-mono overflow-x-auto pr-12">
                   <code>{`curl -H "Authorization: Bearer YOUR_API_KEY" \\
   "https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS"`}</code>
                 </pre>
@@ -149,7 +149,7 @@ export default function DocsPage() {
                 All endpoints return JSON. Replace <code className="px-1.5 py-0.5 bg-slate-100 text-slate-800 rounded text-sm font-mono">YOUR_WALLET_ADDRESS</code> with your actual Solana address.
               </p>
 
-              <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 {/* Balance */}
                 <div className="border border-slate-200 rounded-lg overflow-hidden hover:border-slate-300 transition-colors">
                   <div className="bg-slate-50 px-5 py-3 border-b border-slate-200">
@@ -164,7 +164,7 @@ export default function DocsPage() {
                   <div className="p-5 bg-white">
                     <div className="relative bg-slate-900 rounded-lg p-4">
                       <CopyButton text="curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS" />
-                      <pre className="text-xs text-slate-300 font-mono overflow-x-auto pr-12">
+                      <pre className="text-xs sm:text-sm text-slate-300 font-mono overflow-x-auto pr-12">
                         <code>curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS</code>
                       </pre>
                     </div>
@@ -185,7 +185,7 @@ export default function DocsPage() {
                   <div className="p-5 bg-white">
                     <div className="relative bg-slate-900 rounded-lg p-4">
                       <CopyButton text="curl https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS" />
-                      <pre className="text-xs text-slate-300 font-mono overflow-x-auto pr-12">
+                      <pre className="text-xs sm:text-sm text-slate-300 font-mono overflow-x-auto pr-12">
                         <code>curl https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS</code>
                       </pre>
                     </div>
@@ -206,7 +206,7 @@ export default function DocsPage() {
                   <div className="p-5 bg-white">
                     <div className="relative bg-slate-900 rounded-lg p-4">
                       <CopyButton text="curl https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS" />
-                      <pre className="text-xs text-slate-300 font-mono overflow-x-auto pr-12">
+                      <pre className="text-xs sm:text-sm text-slate-300 font-mono overflow-x-auto pr-12">
                         <code>curl https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS</code>
                       </pre>
                     </div>
@@ -227,7 +227,7 @@ export default function DocsPage() {
                   <div className="p-5 bg-white">
                     <div className="relative bg-slate-900 rounded-lg p-4">
                       <CopyButton text="curl https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS" />
-                      <pre className="text-xs text-slate-300 font-mono overflow-x-auto pr-12">
+                      <pre className="text-xs sm:text-sm text-slate-300 font-mono overflow-x-auto pr-12">
                         <code>curl https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS</code>
                       </pre>
                     </div>
@@ -248,7 +248,7 @@ export default function DocsPage() {
                   <div className="p-5 bg-white">
                     <div className="relative bg-slate-900 rounded-lg p-4">
                       <CopyButton text="curl https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT" />
-                      <pre className="text-xs text-slate-300 font-mono overflow-x-auto pr-12">
+                      <pre className="text-xs sm:text-sm text-slate-300 font-mono overflow-x-auto pr-12">
                         <code>curl https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT</code>
                       </pre>
                     </div>
@@ -287,8 +287,8 @@ export default function DocsPage() {
                     <code className="text-xs font-mono text-slate-700">X-Transaction-Signature: ...</code>
                   </div>
                 </div>
-              </div>
-            </section>
+            </div>
+          </section>
 
             {/* x402 Protocol */}
             <section id="x402">
@@ -335,7 +335,8 @@ export default function DocsPage() {
 
               <h3 className="text-lg font-semibold mb-4 text-slate-900">Response Headers</h3>
               <div className="border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full text-sm">
+                <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                <table className="min-w-[640px] sm:min-w-0 w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
                       <th className="text-left px-5 py-3 font-semibold text-slate-900">Header</th>
@@ -365,6 +366,7 @@ export default function DocsPage() {
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
 
               <h3 className="text-lg font-semibold mb-4 mt-8 text-slate-900">Example</h3>
@@ -386,7 +388,7 @@ curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET
 curl -H "X-Quote-Id: abc123" \\
      -H "X-Transaction-Signature: YourSolanaSignature..." \\
      https://pingpay.app/api/solana/balance?address=YOUR_WALLET`} />
-                <pre className="text-xs text-slate-300 font-mono overflow-x-auto pr-12">
+                <pre className="text-xs sm:text-sm text-slate-300 font-mono overflow-x-auto pr-12">
                   <code>{`# Step 1: Initial request (receives 402)
 curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET
 
@@ -404,9 +406,9 @@ curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET
 curl -H "X-Quote-Id: abc123" \\
      -H "X-Transaction-Signature: YourSolanaSignature..." \\
      https://pingpay.app/api/solana/balance?address=YOUR_WALLET`}</code>
-                </pre>
-              </div>
-            </section>
+              </pre>
+            </div>
+          </section>
 
             {/* For Creators */}
             <section id="creators">
@@ -436,7 +438,7 @@ curl -H "X-Quote-Id: abc123" \\
                       <span className="text-indigo-600 mt-0.5">•</span>
                       <span>Real-time analytics and usage tracking</span>
                     </li>
-                  </ul>
+              </ul>
                 </div>
 
                 <div>
@@ -462,15 +464,15 @@ curl -H "X-Quote-Id: abc123" \\
                 </div>
               </div>
 
-              <Link
-                href="/creators"
+                <Link
+                  href="/creators"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors"
-              >
-                Get Started as a Creator
-              </Link>
-            </section>
+                >
+                  Get Started as a Creator
+                </Link>
+          </section>
 
-            {/* Support */}
+          {/* Support */}
             <section id="support">
               <h2 className="text-2xl font-bold mb-6 text-slate-900 tracking-tight">Support & Community</h2>
               <p className="text-slate-600 mb-6">
@@ -478,24 +480,24 @@ curl -H "X-Quote-Id: abc123" \\
               </p>
 
               <div className="flex gap-4">
-                <a
-                  href="https://github.com/JermWang/PingPay"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <a
+                href="https://github.com/JermWang/PingPay"
+                target="_blank"
+                rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                >
-                  GitHub
-                </a>
-                <a
-                  href="https://x.com/PingPaySol"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://x.com/PingPaySol"
+                target="_blank"
+                rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                >
-                  Twitter
-                </a>
-              </div>
-            </section>
+              >
+                Twitter
+              </a>
+            </div>
+          </section>
           </div>
         </div>
       </div>
