@@ -37,3 +37,14 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || ""
 
 export const EXAMPLE_SOLANA_ADDRESS = "DYw8jCTfwHNRJhhmFcbXvVDTqWMEVFBX6ZKUmG5CNSKK"
 export const EXAMPLE_VOTE_ACCOUNT = "CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu"
+
+// Platform stats configuration
+// Allows setting a starting baseline for total requests shown on the site
+const parseOffset = (v: string | undefined, fallback: number) => {
+  const n = parseInt((v || "").trim(), 10)
+  return Number.isFinite(n) && n >= 0 ? n : fallback
+}
+export const INITIAL_REQUESTS_OFFSET = parseOffset(
+  process.env.NEXT_PUBLIC_INITIAL_REQUESTS_OFFSET,
+  79
+)

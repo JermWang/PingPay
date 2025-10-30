@@ -10,6 +10,7 @@ import { ApiListItem } from "@/components/creators/api-list-item"
 import type { Service, Creator } from "@/lib/types"
 import { Input } from "@/components/ui/input"
 import { GlowButton } from "@/components/shared/GlowButton"
+import { usePlatformStats } from "@/hooks/use-platform-stats"
 import { Badge } from "@/components/ui/badge"
 
 export default function CreatorsPage() {
@@ -21,6 +22,9 @@ export default function CreatorsPage() {
   const [payoutWallet, setPayoutWallet] = useState<string>("")
   const [savingPayout, setSavingPayout] = useState(false)
   const [payoutMsg, setPayoutMsg] = useState<string>("")
+
+  // Global platform stats (for consistent total requests across site)
+  const { stats: platformStats } = usePlatformStats(30000)
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -99,7 +103,6 @@ export default function CreatorsPage() {
   }
 
   // Calculate analytics from actual service data
-  const totalRequests = services.reduce((acc, s) => acc + (s.total_calls || 0), 0)
   const totalRevenue = services.reduce((acc, s) => acc + ((s.total_calls || 0) * s.price_usd), 0)
   const avgResponseTime = 0.12 // This would need backend tracking
   const totalUsers = services.reduce((acc, s) => acc + (s.total_users || 0), 0)
@@ -218,7 +221,7 @@ export default function CreatorsPage() {
                 <div className="text-xs text-gray-500 bg-black/30 px-2 py-1 rounded-full">24h</div>
               </div>
               <div className="text-sm text-gray-400 mb-1">Total Requests</div>
-              <div className="text-3xl font-bold text-white mb-1">{totalRequests.toLocaleString()}</div>
+              <div className="text-3xl font-bold text-white mb-1">{platformStats.totalRequests.toLocaleString()}</div>
               <div className="text-xs text-gray-500">
                 <span className="text-[#9945FF]">+0%</span> from yesterday
               </div>

@@ -185,24 +185,24 @@ export function Hero() {
           </div>
 
           <div className="mt-8 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
-            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
+            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[110px]">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 leading-[1.15]">
                 ${platformStats.minPrice.toFixed(3)}
               </div>
               <div className="text-xs md:text-sm text-white/80">Starting price</div>
             </div>
-            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">&lt;1s</div>
+            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[110px]">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 leading-[1.15]">&lt;1s</div>
               <div className="text-xs md:text-sm text-white/80">Verification</div>
             </div>
-            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2">
+            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[110px]">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 leading-[1.15]">
                 {platformStats.totalAPIs}+
               </div>
               <div className="text-xs md:text-sm text-white/80">APIs</div>
             </div>
-            <div className="text-center p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl relative overflow-hidden">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 md:mb-2 transition-all duration-300">
+            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl relative overflow-hidden flex flex-col items-center justify-center min-h-[110px]">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 transition-all duration-300 leading-[1.15]">
                 {platformStats.totalRequests.toLocaleString()}
               </div>
               <div className="text-xs md:text-sm text-white/80">Total Requests</div>

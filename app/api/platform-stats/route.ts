@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import * as SupabaseClient from "@/lib/supabase-client"
+import { createClient } from "@supabase/supabase-js"
+import { SUPABASE_URL, SUPABASE_ANON_KEY, INITIAL_REQUESTS_OFFSET } from "@/lib/constants"
 import { getCreatorEarnings } from "@/lib/creator-payouts"
 
 export const dynamic = "force-dynamic"
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
     // Calculate platform-wide statistics
     const totalAPIs = services.length
     const activeAPIs = services.filter(s => s.is_active).length
-    const totalCalls = services.reduce((acc, s) => acc + (s.total_calls || 0), 0)
+    const totalCallsFromServices = services.reduce((acc, s) => acc + (s.total_calls || 0), 0)
     const totalUsers = services.reduce((acc, s) => acc + (s.total_users || 0), 0)
     
     // Creator statistics
@@ -32,6 +34,24 @@ export async function GET(request: NextRequest) {
       ? prices.reduce((acc, p) => acc + p, 0) / prices.length 
       : 0
     
+    // Global requests from usage logs + baseline offset
+    let usageLogCount = 0
+    try {
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        const { count, error } = await sb
+          .from("usage_logs")
+          .select("*", { count: "exact", head: true })
+        if (error) throw error
+        usageLogCount = typeof count === "number" ? count : 0
+      }
+    } catch (err) {
+      // Non-fatal: fall back to service-derived count
+      usageLogCount = Math.max(usageLogCount, totalCallsFromServices)
+    }
+
+    const totalRequests = INITIAL_REQUESTS_OFFSET + usageLogCount
+
     // Revenue statistics (sum of all creator earnings)
     let totalRevenue = 0
     const processedCreators = new Set<string>()
@@ -53,8 +73,8 @@ export async function GET(request: NextRequest) {
       // API Statistics
       totalAPIs,
       activeAPIs,
-      totalCalls,
-      totalRequests: totalCalls, // Alias for consistency
+      totalCalls: totalRequests, // keep legacy field in sync
+      totalRequests,
       
       // User Statistics
       totalUsers,

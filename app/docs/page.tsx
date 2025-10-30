@@ -489,7 +489,7 @@ curl -H "X-Quote-Id: abc123" \\
                 GitHub
               </a>
               <a
-                href="https://x.com/PingPaySol"
+                href="https://x.com/pingpayshop"
                 target="_blank"
                 rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50 transition-colors"
