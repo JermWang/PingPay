@@ -10,6 +10,7 @@ import { ApiListItem } from "@/components/creators/api-list-item"
 import type { Service, Creator } from "@/lib/types"
 import { Input } from "@/components/ui/input"
 import { GlowButton } from "@/components/shared/GlowButton"
+import { Badge } from "@/components/ui/badge"
 
 export default function CreatorsPage() {
   const { publicKey, connected } = useWallet()
@@ -117,12 +118,16 @@ export default function CreatorsPage() {
           <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#9945FF] to-[#14F195] flex items-center justify-center">
             <Zap className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
-            Creator Dashboard
-          </h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
+              Creator Dashboard
+            </h1>
+            <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">Beta</Badge>
+          </div>
           <p className="text-gray-400 text-lg">
             Connect your Solana wallet to create and manage your APIs
           </p>
+          <p className="text-xs text-yellow-300/80">This dashboard is in beta.</p>
           <div className="flex justify-center pt-4">
             <WalletMultiButton />
           </div>
@@ -144,12 +149,16 @@ export default function CreatorsPage() {
         <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-8 mb-12 backdrop-blur-xl bg-white/5 border border-white/10">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
-                Creator Dashboard
-              </h1>
+              <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
+                  Creator Dashboard
+                </h1>
+                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">Beta</Badge>
+              </div>
               <p className="text-gray-400">
                 Manage your APIs and track your performance
               </p>
+              <p className="text-xs text-yellow-300/80 mt-1">This dashboard is in beta.</p>
             </div>
             {creator && (
               <div className="hidden md:block">

@@ -1,12 +1,10 @@
 import Link from "next/link"
 import { ArrowLeft, Code, Key, Zap, Shield } from "lucide-react"
-import { ParticleBackground } from "@/components/shared/particle-background"
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-black text-white relative">
-      <ParticleBackground />
-      <div className="container mx-auto px-4 py-12 relative z-10">
+    <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
+      <div className="container mx-auto max-w-6xl px-4 py-12 relative z-10">
         {/* Back Button */}
         <Link
           href="/"
