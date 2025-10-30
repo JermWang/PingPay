@@ -27,7 +27,12 @@ export function Hero() {
   const { stats: platformStats } = usePlatformStats(30000)
   
   const TOKEN_ADDRESS = "CWGwQ9EWymsQNLgMhUJGpUT3BLJ2aKaj1PZGVVoBpump"
-  const TOKEN_ADDRESS_SHORT = TOKEN_ADDRESS
+  const shortenAddress = (address: string, start = 6, end = 6) => {
+    if (!address) return ""
+    const minLength = start + end + 1
+    if (address.length <= minLength) return address
+    return address.slice(0, start) + "…" + address.slice(-end)
+  }
   
   const handleCopyToken = () => {
     navigator.clipboard.writeText(TOKEN_ADDRESS)
@@ -146,6 +151,7 @@ export function Hero() {
         <div className="md:col-span-5 text-center md:text-left">
           <button
             onClick={handleCopyToken}
+            title={TOKEN_ADDRESS}
             className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg shadow-primary/10 mb-3 md:mb-8 hover:bg-white/15 hover:border-primary/50 transition-all cursor-pointer group"
           >
             {copied ? (
@@ -154,7 +160,14 @@ export function Hero() {
               <Copy className="w-3 h-3 md:w-4 md:h-4 text-primary group-hover:text-primary/80" />
             )}
             <span className="text-xs md:text-sm font-medium text-white group-hover:text-primary/90">
-              {copied ? "Copied!" : TOKEN_ADDRESS_SHORT}
+              {copied ? (
+                "Copied!"
+              ) : (
+                <>
+                  <span className="md:hidden">{shortenAddress(TOKEN_ADDRESS, 6, 6)}</span>
+                  <span className="hidden md:inline">{TOKEN_ADDRESS}</span>
+                </>
+              )}
             </span>
           </button>
 
