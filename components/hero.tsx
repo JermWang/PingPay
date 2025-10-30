@@ -26,7 +26,7 @@ export function Hero() {
   // Use universal platform stats hook (refreshes every 30s)
   const { stats: platformStats } = usePlatformStats(30000)
   
-  const TOKEN_ADDRESS = "COMING SOON"
+  const TOKEN_ADDRESS = "CWGwQ9EWymsQNLgMhUJGpUT3BLJ2aKaj1PZGVVoBpump"
   const TOKEN_ADDRESS_SHORT = TOKEN_ADDRESS
   
   const handleCopyToken = () => {
