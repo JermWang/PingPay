@@ -118,11 +118,11 @@ export default function CreatorsPage() {
           <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#9945FF] to-[#14F195] flex items-center justify-center">
             <Zap className="w-10 h-10 text-white" />
           </div>
-          <div className="flex items-center justify-center gap-2">
+          <div className="relative">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
               Creator Dashboard
             </h1>
-            <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">Beta</Badge>
+            <Badge className="absolute -top-1 -right-12 bg-yellow-500/20 text-yellow-300 border-yellow-500/30 text-xs px-1.5 py-0.5">Beta</Badge>
           </div>
           <p className="text-gray-400 text-lg">
             Connect your Solana wallet to create and manage your APIs
@@ -149,11 +149,11 @@ export default function CreatorsPage() {
         <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-8 mb-12 backdrop-blur-xl bg-white/5 border border-white/10">
           <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="relative mb-2">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9945FF] via-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
                   Creator Dashboard
                 </h1>
-                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">Beta</Badge>
+                <Badge className="absolute -top-0.5 -right-14 bg-yellow-500/20 text-yellow-300 border-yellow-500/30 text-xs px-1.5 py-0.5">Beta</Badge>
               </div>
               <p className="text-gray-400">
                 Manage your APIs and track your performance
