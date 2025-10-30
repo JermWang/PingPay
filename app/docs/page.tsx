@@ -1,5 +1,32 @@
+"use client"
+
 import Link from "next/link"
-import { ArrowLeft, Code, Key, Zap, Shield, BookOpen, Rocket, DollarSign, Lock } from "lucide-react"
+import { ArrowLeft, Code, Key, Zap, Shield, BookOpen, Rocket, DollarSign, Lock, Copy, Check } from "lucide-react"
+import { useState } from "react"
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-700/50 hover:bg-slate-600/50 transition-colors border border-slate-600/50"
+      title="Copy to clipboard"
+    >
+      {copied ? (
+        <Check className="w-4 h-4 text-green-400" />
+      ) : (
+        <Copy className="w-4 h-4 text-slate-300" />
+      )}
+    </button>
+  )
+}
 
 export default function DocsPage() {
   return (
@@ -9,7 +36,7 @@ export default function DocsPage() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
       
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
+      <div className="container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
         {/* Back Button */}
         <Link
           href="/"
@@ -139,48 +166,69 @@ export default function DocsPage() {
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
                 <p className="text-sm text-blue-200">
                   <span className="font-semibold">Note:</span> Replace <code className="bg-slate-900/50 px-1.5 py-0.5 rounded text-blue-300">YOUR_WALLET_ADDRESS</code> with your actual address. 
-                  For paid endpoints, use an API key or x402 headers.
+                  Click the copy button to grab any code snippet.
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Balance */}
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors">
                   <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/balance</h3>
                   <p className="text-slate-400 mb-3 text-sm">Returns SOL balance for a wallet</p>
-                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
-                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  <div className="relative bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-hidden">
+                    <CopyButton text="curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS" />
+                    <pre className="text-xs text-green-300 pr-10 overflow-x-auto"><code>curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS</code></pre>
                   </div>
                 </div>
 
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                {/* Tokens */}
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors">
                   <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/tokens</h3>
                   <p className="text-slate-400 mb-3 text-sm">Lists SPL tokens held by a wallet</p>
-                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
-                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  <div className="relative bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-hidden">
+                    <CopyButton text="curl https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS" />
+                    <pre className="text-xs text-green-300 pr-10 overflow-x-auto"><code>curl https://pingpay.app/api/solana/tokens?address=YOUR_WALLET_ADDRESS</code></pre>
                   </div>
                 </div>
 
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                {/* Transactions */}
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors">
                   <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/transactions</h3>
                   <p className="text-slate-400 mb-3 text-sm">Recent transactions for a wallet</p>
-                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
-                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  <div className="relative bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-hidden">
+                    <CopyButton text="curl https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS" />
+                    <pre className="text-xs text-green-300 pr-10 overflow-x-auto"><code>curl https://pingpay.app/api/solana/transactions?address=YOUR_WALLET_ADDRESS</code></pre>
                   </div>
                 </div>
 
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                {/* NFT */}
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors">
                   <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/nft</h3>
                   <p className="text-slate-400 mb-3 text-sm">Fetch NFTs owned by a wallet</p>
-                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
-                    <pre className="text-xs text-green-300"><code>?address=YOUR_WALLET_ADDRESS</code></pre>
+                  <div className="relative bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-hidden">
+                    <CopyButton text="curl https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS" />
+                    <pre className="text-xs text-green-300 pr-10 overflow-x-auto"><code>curl https://pingpay.app/api/solana/nft?address=YOUR_WALLET_ADDRESS</code></pre>
                   </div>
                 </div>
 
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors overflow-hidden">
+                {/* Validator */}
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors">
                   <h3 className="text-base font-semibold mb-1 text-white">GET /api/solana/validator</h3>
                   <p className="text-slate-400 mb-3 text-sm">Validator info for a vote account</p>
-                  <div className="bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-x-auto">
-                    <pre className="text-xs text-green-300"><code>?vote_account=YOUR_VOTE_ACCOUNT</code></pre>
+                  <div className="relative bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-hidden">
+                    <CopyButton text="curl https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT" />
+                    <pre className="text-xs text-green-300 pr-10 overflow-x-auto"><code>curl https://pingpay.app/api/solana/validator?vote_account=YOUR_VOTE_ACCOUNT</code></pre>
+                  </div>
+                </div>
+
+                {/* API Key Example */}
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-4 hover:border-slate-600/50 transition-colors">
+                  <h3 className="text-base font-semibold mb-1 text-white">With API Key</h3>
+                  <p className="text-slate-400 mb-3 text-sm">Prepaid API key authentication</p>
+                  <div className="relative bg-slate-900/70 rounded p-3 border border-slate-700/50 overflow-hidden">
+                    <CopyButton text='curl -H "Authorization: Bearer YOUR_API_KEY" https://pingpay.app/api/solana/balance?address=YOUR_WALLET_ADDRESS' />
+                    <pre className="text-xs text-green-300 pr-10 overflow-x-auto"><code>curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://pingpay.app/api/solana/balance?address=...</code></pre>
                   </div>
                 </div>
               </div>
@@ -191,52 +239,83 @@ export default function DocsPage() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">x402 Headers</span>
               </h2>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-white">Standard Headers (402 Response)</h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Payment-Required</code>
-                      <span>always "true" on 402</span>
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-5">
+                  <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+                    Standard Headers (402 Response)
+                  </h3>
+                  <ul className="space-y-2.5">
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-purple-300 text-sm w-fit">X-Payment-Required</code>
+                      <span className="text-xs text-slate-400">always "true" on 402</span>
                     </li>
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Quote-Id</code>
-                      <span>unique quote identifier</span>
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-purple-300 text-sm w-fit">X-Quote-Id</code>
+                      <span className="text-xs text-slate-400">unique quote identifier</span>
                     </li>
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Amount-USD</code>
-                      <span>price for this request</span>
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-purple-300 text-sm w-fit">X-Amount-USD</code>
+                      <span className="text-xs text-slate-400">price for this request</span>
                     </li>
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Solana-Address</code>
-                      <span>receiver address</span>
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-purple-300 text-sm w-fit">X-Solana-Address</code>
+                      <span className="text-xs text-slate-400">receiver address</span>
                     </li>
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-purple-300 shrink-0">X-Expires-At</code>
-                      <span>ISO timestamp when quote expires</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-white">Client Retry (After Paying)</h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-green-300 shrink-0">X-Transaction-Signature</code>
-                      <span>Solana transaction signature</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-sm text-slate-300">
-                      <code className="bg-slate-900/50 px-2 py-0.5 rounded text-green-300 shrink-0">X-Quote-Id</code>
-                      <span>the same quote id you received</span>
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-purple-300 text-sm w-fit">X-Expires-At</code>
+                      <span className="text-xs text-slate-400">ISO timestamp when quote expires</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="border-t border-slate-700/50 pt-4">
-                  <p className="text-xs text-slate-400">
-                    Learn more about x402 at <a className="underline text-purple-400 hover:text-purple-300" href="https://www.x402.org/" target="_blank" rel="noreferrer">x402.org</a>
-                  </p>
+                <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-5">
+                  <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                    Client Retry (After Paying)
+                  </h3>
+                  <ul className="space-y-2.5">
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-green-300 text-sm w-fit">X-Transaction-Signature</code>
+                      <span className="text-xs text-slate-400">Solana transaction signature</span>
+                    </li>
+                    <li className="flex flex-col gap-1">
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-green-300 text-sm w-fit">X-Quote-Id</code>
+                      <span className="text-xs text-slate-400">the same quote id you received</span>
+                    </li>
+                  </ul>
                 </div>
+              </div>
+
+              <div className="bg-slate-800/40 border border-slate-700/40 rounded-lg p-5">
+                <h3 className="text-lg font-semibold mb-4 text-white">Example x402 Flow</h3>
+                <div className="relative bg-slate-900/70 rounded p-4 border border-slate-700/50">
+                  <CopyButton text={`# Step 1: Initial request (gets 402)
+curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET
+
+# Step 2: Pay the quote on Solana, get tx signature
+
+# Step 3: Retry with signature
+curl -H "X-Quote-Id: abc123" \\
+     -H "X-Transaction-Signature: YourSolanaSignature" \\
+     https://pingpay.app/api/solana/balance?address=YOUR_WALLET`} />
+                  <pre className="text-xs text-green-300 pr-10"><code>{`# Step 1: Initial request (gets 402)
+curl https://pingpay.app/api/solana/balance?address=YOUR_WALLET
+
+# Step 2: Pay the quote on Solana, get tx signature
+
+# Step 3: Retry with signature
+curl -H "X-Quote-Id: abc123" \\
+     -H "X-Transaction-Signature: YourSolanaSignature" \\
+     https://pingpay.app/api/solana/balance?address=YOUR_WALLET`}</code></pre>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-700/50 pt-4 mt-6">
+                <p className="text-xs text-slate-400">
+                  Learn more about x402 at <a className="underline text-purple-400 hover:text-purple-300" href="https://www.x402.org/" target="_blank" rel="noreferrer">x402.org</a>
+                </p>
             </div>
           </section>
 
@@ -299,7 +378,7 @@ export default function DocsPage() {
                 <div className="flex items-start gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
                   <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-sm font-bold">3</div>
                   <p className="text-slate-300 pt-0.5">Request a withdrawal; we'll send USDC to your payout wallet</p>
-                </div>
+              </div>
             </div>
           </section>
 
