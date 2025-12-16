@@ -82,13 +82,6 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
 
   return (
     <section>
-      <div className="mb-6 flex flex-col gap-1">
-        <h2 className="text-2xl font-semibold">Available APIs</h2>
-        <p className="text-sm text-muted-foreground">
-          {filteredServices.length} {filteredServices.length === 1 ? "service" : "services"} found • Pay only for what you use
-        </p>
-      </div>
-
       {error && (
         <div className="mb-6 rounded border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -97,17 +90,54 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
 
       {loading ? (
         <div className="text-gray-400">Loading services…</div>
-      ) : filteredServices.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
-            <ServiceCard key={service.id} service={service} />
-          ))}
-        </div>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-sm text-gray-400">
-          <p className="text-base mb-1">No APIs found matching your filters</p>
-          <p className="text-xs text-gray-500">Try adjusting your search or filter criteria</p>
-        </div>
+        (() => {
+          const templateServices = filteredServices.filter(s => !s.creator_id)
+          const userServices = filteredServices.filter(s => !!s.creator_id)
+
+          if (templateServices.length === 0 && userServices.length === 0) {
+            return (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-sm text-gray-400">
+                <p className="text-base mb-1">No APIs found matching your filters</p>
+                <p className="text-xs text-gray-500">Try adjusting your search or filter criteria</p>
+              </div>
+            )
+          }
+
+          return (
+            <div className="space-y-10">
+              {templateServices.length > 0 && (
+                <div>
+                  <div className="mb-4 flex flex-col gap-1">
+                    <h2 className="text-2xl font-semibold">Template APIs</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {templateServices.length} {templateServices.length === 1 ? "service" : "services"} found
+                    </p>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {templateServices.map((service) => (
+                      <ServiceCard key={service.id} service={service} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {userServices.length > 0 && (
+                <div>
+                  <div className="mb-4 flex flex-col gap-1">
+                    <h2 className="text-2xl font-semibold">User APIs</h2>
+                    <p className="text-sm text-muted-foreground">Created by PingPay users</p>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {userServices.map((service) => (
+                      <ServiceCard key={service.id} service={service} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })()
       )}
     </section>
   )
