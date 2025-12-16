@@ -64,7 +64,7 @@ export function MarketplaceHeader() {
               </span>
               <span className="hidden sm:inline text-white/50">•</span>
               <span>
-                <span className="font-semibold">{stats.activeCreators}</span> creators
+                Growing creator community
               </span>
               <span className="hidden sm:inline text-white/50">•</span>
               <span>

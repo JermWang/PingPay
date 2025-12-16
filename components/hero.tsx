@@ -26,7 +26,7 @@ export function Hero() {
   // Use universal platform stats hook (refreshes every 30s)
   const { stats: platformStats } = usePlatformStats(30000)
   
-  const TOKEN_LABEL = "coming soon"
+  const TOKEN_LABEL = "4VfNT59yYtrafsPBX244VJUDg5UQfidZnHM9MJq8pump"
   
   const handleCopyToken = () => {
     navigator.clipboard.writeText(TOKEN_LABEL)
