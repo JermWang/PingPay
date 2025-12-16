@@ -65,7 +65,7 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
     onFilterChange(defaultFilters)
   }
 
-  const hasActiveFilters = 
+  const hasActiveFilters =
     filters.search !== "" ||
     filters.category !== "All Categories" ||
     filters.minRating > 0 ||
@@ -73,9 +73,9 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
     filters.maxPrice < 1
 
   return (
-    <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-6 backdrop-blur-xl bg-white/5 border border-white/10 mb-8">
-      {/* Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
+    <div className="mb-8 space-y-3">
+      {/* Slim control bar */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -83,25 +83,27 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
             value={filters.search}
             onChange={(e) => updateFilters({ search: e.target.value })}
             placeholder="Search APIs..."
-            className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#14F195] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#14F195] transition-colors"
           />
         </div>
 
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
-        >
-          <SlidersHorizontal className="w-5 h-5" />
-          <span>Filters</span>
-          {hasActiveFilters && (
-            <span className="w-2 h-2 bg-[#14F195] rounded-full" />
-          )}
-        </button>
+        <div className="flex items-center justify-between gap-3 md:justify-end">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white px-3 py-2 rounded-md hover:bg-white/5 transition-colors"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span>{showFilters ? "Hide filters" : "More filters"}</span>
+            {hasActiveFilters && (
+              <span className="w-2 h-2 bg-[#14F195] rounded-full" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Advanced Filters */}
       {showFilters && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 pt-3 border-t border-white/10">
           {/* Category */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -181,10 +183,10 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
 
       {/* Clear Filters */}
       {hasActiveFilters && (
-        <div className="flex justify-end mt-4">
+        <div className="flex justify-end">
           <button
             onClick={clearFilters}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-xs text-gray-400 hover:text-white transition-colors"
           >
             <X className="w-4 h-4" />
             Clear all filters

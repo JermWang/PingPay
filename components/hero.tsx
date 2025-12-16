@@ -26,16 +26,10 @@ export function Hero() {
   // Use universal platform stats hook (refreshes every 30s)
   const { stats: platformStats } = usePlatformStats(30000)
   
-  const TOKEN_ADDRESS = "CWGwQ9EWymsQNLgMhUJGpUT3BLJ2aKaj1PZGVVoBpump"
-  const shortenAddress = (address: string, start = 6, end = 6) => {
-    if (!address) return ""
-    const minLength = start + end + 1
-    if (address.length <= minLength) return address
-    return address.slice(0, start) + "…" + address.slice(-end)
-  }
+  const TOKEN_LABEL = "coming soon"
   
   const handleCopyToken = () => {
-    navigator.clipboard.writeText(TOKEN_ADDRESS)
+    navigator.clipboard.writeText(TOKEN_LABEL)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -151,7 +145,7 @@ export function Hero() {
         <div className="md:col-span-5 text-center md:text-left">
           <button
             onClick={handleCopyToken}
-            title={TOKEN_ADDRESS}
+            title={TOKEN_LABEL}
             className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg shadow-primary/10 mb-3 md:mb-8 hover:bg-white/15 hover:border-primary/50 transition-all cursor-pointer group"
           >
             {copied ? (
@@ -164,8 +158,8 @@ export function Hero() {
                 "Copied!"
               ) : (
                 <>
-                  <span className="md:hidden">{shortenAddress(TOKEN_ADDRESS, 6, 6)}</span>
-                  <span className="hidden md:inline">{TOKEN_ADDRESS}</span>
+                  <span className="md:hidden">{TOKEN_LABEL}</span>
+                  <span className="hidden md:inline">{TOKEN_LABEL}</span>
                 </>
               )}
             </span>
@@ -177,7 +171,7 @@ export function Hero() {
             <NeonText>Powered by Solana</NeonText>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-2xl text-muted-foreground mb-6 md:mb-12 max-w-3xl mx-auto md:mx-0 text-pretty">
+          <p className="text-base sm:text-lg md:text-2xl text-muted-foreground mb-6 md:mb-10 max-w-3xl mx-auto md:mx-0 text-pretty">
             Access premium APIs for pennies. Pay only for what you use with instant USDC micropayments on Solana.
           </p>
 
@@ -197,32 +191,26 @@ export function Hero() {
             </GlowButton>
           </div>
 
-          <div className="mt-8 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 md:max-w-none max-w-4xl mx-auto md:mx-0">
-            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[110px]">
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 leading-[1.15]">
-                ${platformStats.minPrice.toFixed(3)}
-              </div>
-              <div className="text-xs md:text-sm text-white/80">Starting price</div>
-            </div>
-            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[110px]">
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 leading-[1.15]">&lt;1s</div>
-              <div className="text-xs md:text-sm text-white/80">Verification</div>
-            </div>
-            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[110px]">
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 leading-[1.15]">
-                {platformStats.totalAPIs}+
-              </div>
-              <div className="text-xs md:text-sm text-white/80">APIs</div>
-            </div>
-            <div className="text-center px-4 py-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl relative overflow-hidden flex flex-col items-center justify-center min-h-[110px]">
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2 transition-all duration-300 leading-[1.15]">
-                {platformStats.totalRequests.toLocaleString()}
-              </div>
-              <div className="text-xs md:text-sm text-white/80">Total Requests</div>
-              {platformStats.totalRequests > 0 && (
-                <div className="absolute inset-0 bg-primary/10 animate-pulse pointer-events-none" />
-              )}
-            </div>
+          <div className="mt-6 md:mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs md:text-sm text-white/70">
+            <span>
+              Starting at
+              <span className="ml-1 font-semibold text-primary">
+                ${platformStats.minPrice.toFixed(3)} / request
+              </span>
+            </span>
+            <span className="hidden sm:inline text-white/50">•</span>
+            <span className="flex items-center gap-1">
+              <ArrowRight className="w-3 h-3 text-primary" />
+              &lt;1s verification
+            </span>
+            <span className="hidden sm:inline text-white/50">•</span>
+            <span>
+              <span className="font-semibold">{platformStats.totalAPIs}+</span> APIs
+            </span>
+            <span className="hidden sm:inline text-white/50">•</span>
+            <span>
+              <span className="font-semibold">{platformStats.totalRequests.toLocaleString()}</span> total requests
+            </span>
           </div>
         </div>
       </div>

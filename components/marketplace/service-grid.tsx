@@ -82,15 +82,15 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
 
   return (
     <section>
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Available APIs</h2>
-        <p className="text-muted-foreground">
+      <div className="mb-6 flex flex-col gap-1">
+        <h2 className="text-2xl font-semibold">Available APIs</h2>
+        <p className="text-sm text-muted-foreground">
           {filteredServices.length} {filteredServices.length === 1 ? "service" : "services"} found • Pay only for what you use
         </p>
       </div>
 
       {error && (
-        <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-4 text-destructive bg-destructive/10 border border-destructive/20 mb-6">
+        <div className="mb-6 rounded border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -104,10 +104,10 @@ export function ServiceGrid({ filters }: ServiceGridProps) {
           ))}
         </div>
       ) : (
-        <div className="glass-panel glass-outline reflective-overlay rounded-2xl p-12 text-center backdrop-blur-xl bg-white/5 border border-white/10">
-          <p className="text-gray-400 text-lg">No APIs found matching your filters</p>
-          <p className="text-gray-500 text-sm mt-2">Try adjusting your search or filter criteria</p>
-      </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-sm text-gray-400">
+          <p className="text-base mb-1">No APIs found matching your filters</p>
+          <p className="text-xs text-gray-500">Try adjusting your search or filter criteria</p>
+        </div>
       )}
     </section>
   )

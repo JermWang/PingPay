@@ -64,7 +64,7 @@ export function ServiceCard({ service, showCreator = true }: ServiceCardProps) {
       {/* Glow effect on hover */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-[#9945FF] to-[#14F195] rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
       
-      <GlassPanel className="relative p-6 glass-hover reflective-overlay transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#9945FF]/20 h-full flex flex-col">
+      <GlassPanel className="relative p-6 glass-hover reflective-overlay transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#9945FF]/15 h-full flex flex-col">
         {/* Header with badges and price */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex flex-wrap items-center gap-2">
@@ -78,19 +78,24 @@ export function ServiceCard({ service, showCreator = true }: ServiceCardProps) {
               </div>
             )}
             {service.featured && (
-              <div className="flex items-center gap-1 bg-[#9945FF]/20 text-[#9945FF] px-2.5 py-1 rounded-full text-xs font-medium border border-[#9945FF]/30 animate-pulse">
+              <div className="flex items-center gap-1 bg-[#9945FF]/15 text-[#9945FF] px-2.5 py-1 rounded-full text-xs font-medium border border-[#9945FF]/25">
                 <Zap className="w-3 h-3" />
                 <span>Featured</span>
               </div>
             )}
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-end gap-1">
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold bg-gradient-to-r from-[#14F195] to-[#00FFA3] bg-clip-text text-transparent">
                 ${service.price_usd.toFixed(3)}
               </span>
             </div>
             <span className="text-xs text-gray-500">per request</span>
+            {service.free_tier_limit && service.free_tier_limit > 0 && (
+              <span className="text-[11px] text-emerald-300">
+                {service.free_tier_limit} free {service.free_tier_period} calls
+              </span>
+            )}
           </div>
         </div>
 
@@ -112,7 +117,6 @@ export function ServiceCard({ service, showCreator = true }: ServiceCardProps) {
           
           {stats && stats.total_calls > 0 && (
             <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#14F195] animate-pulse" />
               <span className="font-medium">{stats.total_calls.toLocaleString()}</span>
               <span>calls</span>
             </div>
@@ -134,33 +138,21 @@ export function ServiceCard({ service, showCreator = true }: ServiceCardProps) {
           </Link>
         )}
 
-        {/* Free tier badge */}
-        {service.free_tier_limit && service.free_tier_limit > 0 && (
-          <div className="mb-4">
-            <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 px-3 py-2 rounded-lg border border-green-500/30">
-              <Zap className="w-3 h-3" />
-              <span className="font-medium">
-                {service.free_tier_limit} free {service.free_tier_period} calls
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Endpoint display */}
-        <div className="bg-black/40 rounded-lg p-3 mb-4 flex items-center justify-between border border-white/10 group-hover:border-[#14F195]/30 transition-colors">
+        <div className="bg-black/30 rounded-lg p-3 mb-4 flex items-center justify-between border border-white/5">
           <code className="text-xs font-mono text-gray-300 truncate flex-1 mr-2">
             {service.endpoint}
           </code>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleCopy} 
-            className="h-7 w-7 p-0 hover:bg-[#14F195]/20 transition-colors flex-shrink-0"
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleCopy}
+            className="h-7 w-7 p-0 text-gray-400 hover:text-[#14F195] hover:bg-white/5 flex-shrink-0"
           >
             {copied ? (
               <Check className="w-3.5 h-3.5 text-green-500" />
             ) : (
-              <Copy className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#14F195]" />
+              <Copy className="w-3.5 h-3.5" />
             )}
           </Button>
         </div>

@@ -12,16 +12,17 @@ export function MarketplaceHeader() {
   return (
     <header className="relative">
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/10">
+      <div className="sticky top-0 z-50 bg-black/90 backdrop-blur-xl border-b border-white/10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" asChild className="hover:bg-white/10">
-                <Link href="/">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Home
-                </Link>
-              </Button>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Home</span>
+              </Link>
             </div>
             <Link href="/creators">
               <Button className="bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:opacity-90 transition-opacity">
@@ -57,47 +58,22 @@ export function MarketplaceHeader() {
               No subscriptions, no commitments—just pay for what you use.
             </p>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 max-w-3xl mx-auto">
-              <div className="glass-panel glass-outline rounded-xl p-4 backdrop-blur-xl bg-white/5 border border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#14F195]/20 flex items-center justify-center">
-                    <Zap className="w-5 h-5 text-[#14F195]" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-white">{stats.totalAPIs}</div>
-                <div className="text-xs text-gray-400">Live APIs</div>
-              </div>
-
-              <div className="glass-panel glass-outline rounded-xl p-4 backdrop-blur-xl bg-white/5 border border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#9945FF]/20 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-[#9945FF]" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-white">{stats.totalCalls.toLocaleString()}</div>
-                <div className="text-xs text-gray-400">Total Calls</div>
-              </div>
-
-              <div className="glass-panel glass-outline rounded-xl p-4 backdrop-blur-xl bg-white/5 border border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#00FFA3]/20 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-[#00FFA3]" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-white">{stats.activeCreators}</div>
-                <div className="text-xs text-gray-400">Creators</div>
-              </div>
-
-              <div className="glass-panel glass-outline rounded-xl p-4 backdrop-blur-xl bg-white/5 border border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-blue-400" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-white">${stats.avgPrice.toFixed(3)}</div>
-                <div className="text-xs text-gray-400">Avg Price</div>
-              </div>
+            <div className="pt-6 text-sm md:text-base text-white/70 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <span>
+                <span className="font-semibold">{stats.totalAPIs}</span> live APIs
+              </span>
+              <span className="hidden sm:inline text-white/50">•</span>
+              <span>
+                <span className="font-semibold">{stats.totalCalls.toLocaleString()}</span> total calls
+              </span>
+              <span className="hidden sm:inline text-white/50">•</span>
+              <span>
+                <span className="font-semibold">{stats.activeCreators}</span> creators
+              </span>
+              <span className="hidden sm:inline text-white/50">•</span>
+              <span>
+                Avg price <span className="font-semibold">${stats.avgPrice.toFixed(3)}</span>
+              </span>
             </div>
           </div>
         </div>
