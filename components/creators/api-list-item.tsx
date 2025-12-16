@@ -95,7 +95,7 @@ export function ApiListItem({ service, onUpdate, onDelete }: ApiListItemProps) {
                   href={service.external_endpoint}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#9945FF] hover:text-[#14F195] transition-colors flex items-center gap-1"
+                  className="text-[#00F9FF] hover:text-[#9AFFEF] transition-colors flex items-center gap-1"
                 >
                   <span className="truncate max-w-[200px]">{service.external_endpoint}</span>
                   <ExternalLink className="w-3 h-3" />
@@ -111,15 +111,15 @@ export function ApiListItem({ service, onUpdate, onDelete }: ApiListItemProps) {
               <div className="text-xs text-gray-500">Total Requests</div>
             </div>
             <div className="bg-black/20 rounded-lg p-3">
-              <div className="text-2xl font-bold text-[#14F195]">$0.00</div>
+              <div className="text-2xl font-bold text-[#00F9FF]">$0.00</div>
               <div className="text-xs text-gray-500">Revenue</div>
             </div>
             <div className="bg-black/20 rounded-lg p-3">
-              <div className="text-2xl font-bold text-[#9945FF]">0</div>
+              <div className="text-2xl font-bold text-[#9AFFEF]">0</div>
               <div className="text-xs text-gray-500">Unique Users</div>
             </div>
             <div className="bg-black/20 rounded-lg p-3">
-              <div className="text-2xl font-bold text-[#00FFA3]">0.0s</div>
+              <div className="text-2xl font-bold text-[#6DDCFF]">0.0s</div>
               <div className="text-xs text-gray-500">Avg Response</div>
             </div>
           </div>

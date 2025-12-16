@@ -87,8 +87,8 @@ export function Hero() {
       color: string
     }> = []
 
-    // Solana gradient palette
-    const palette = ["#9945FF", "#14F195", "#00FFA3"]
+    // Neon baby blue monochrome palette
+    const palette = ["#00F9FF", "#9AFFEF", "#6DDCFF"]
 
     for (let i = 0; i < 80; i++) {
       particles.push({
@@ -206,10 +206,6 @@ export function Hero() {
             <span className="hidden sm:inline text-white/50">•</span>
             <span>
               <span className="font-semibold">{platformStats.totalAPIs}+</span> APIs
-            </span>
-            <span className="hidden sm:inline text-white/50">•</span>
-            <span>
-              <span className="font-semibold">{platformStats.totalRequests.toLocaleString()}</span> total requests
             </span>
           </div>
         </div>

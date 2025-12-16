@@ -83,7 +83,7 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
             value={filters.search}
             onChange={(e) => updateFilters({ search: e.target.value })}
             placeholder="Search APIs..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#14F195] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#03A9F4] transition-colors"
           />
         </div>
 
@@ -95,7 +95,7 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
             <SlidersHorizontal className="w-4 h-4" />
             <span>{showFilters ? "Hide filters" : "More filters"}</span>
             {hasActiveFilters && (
-              <span className="w-2 h-2 bg-[#14F195] rounded-full" />
+              <span className="w-2 h-2 bg-[#00F9FF] rounded-full" />
             )}
           </button>
         </div>
@@ -112,7 +112,7 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
             <select
               value={filters.category}
               onChange={(e) => updateFilters({ category: e.target.value })}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#14F195] transition-colors"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#00F9FF] transition-colors"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat} className="bg-black">
@@ -130,7 +130,7 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
             <select
               value={filters.minRating}
               onChange={(e) => updateFilters({ minRating: Number(e.target.value) })}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#14F195] transition-colors"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#00F9FF] transition-colors"
             >
               <option value="0" className="bg-black">All Ratings</option>
               <option value="4" className="bg-black">4+ Stars</option>
@@ -169,7 +169,7 @@ export function MarketplaceFilters({ onFilterChange }: MarketplaceFiltersProps) 
             <select
               value={filters.sortBy}
               onChange={(e) => updateFilters({ sortBy: e.target.value })}
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#14F195] transition-colors"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#00F9FF] transition-colors"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value} className="bg-black">

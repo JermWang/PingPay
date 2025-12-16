@@ -30,8 +30,8 @@ export function ParticleBackground() {
       color: string
     }> = []
 
-    // Solana gradient palette
-    const palette = ["#9945FF", "#14F195", "#00FFA3"]
+    // Neon baby blue monochrome palette
+    const palette = ["#00F9FF", "#9AFFEF", "#6DDCFF"]
 
     for (let i = 0; i < 80; i++) {
       particles.push({

@@ -55,7 +55,7 @@ export function ReviewSection({ serviceId, reviews, stats }: ReviewSectionProps)
                 </div>
                 <div className="flex-1 h-2 bg-black/30 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#9945FF] to-[#14F195]"
+                    className="h-full bg-gradient-to-r from-[#00F9FF] to-[#6DDCFF]"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
@@ -83,7 +83,7 @@ export function ReviewSection({ serviceId, reviews, stats }: ReviewSectionProps)
                   <div className="flex items-center gap-3 mb-2">
                     <RatingDisplay rating={review.rating} showCount={false} />
                     {review.verified_purchase && (
-                      <span className="text-xs bg-[#14F195]/20 text-[#14F195] px-2 py-1 rounded-full">
+                      <span className="text-xs bg-[#00F9FF]/15 text-[#00F9FF] px-2 py-1 rounded-full">
                         Verified Purchase
                       </span>
                     )}
@@ -107,7 +107,7 @@ export function ReviewSection({ serviceId, reviews, stats }: ReviewSectionProps)
                     {review.user_wallet.slice(0, 6)}...{review.user_wallet.slice(-4)}
                   </span>
                 </div>
-                <button className="flex items-center gap-1 text-gray-400 hover:text-[#14F195] transition-colors">
+                <button className="flex items-center gap-1 text-gray-400 hover:text-[#00F9FF] transition-colors">
                   <ThumbsUp className="w-3 h-3" />
                   <span>Helpful ({review.helpful_count})</span>
                 </button>

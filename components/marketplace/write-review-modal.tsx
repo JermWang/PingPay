@@ -87,7 +87,7 @@ export function WriteReviewModal({
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-[#9945FF] to-[#14F195] bg-clip-text text-transparent">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-[#00F9FF] to-[#6DDCFF] bg-clip-text text-transparent">
               Write a Review
             </h2>
             <p className="text-sm text-gray-400 mt-1">{serviceName}</p>
@@ -151,7 +151,7 @@ export function WriteReviewModal({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Sum up your experience"
               maxLength={100}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#14F195] transition-colors"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00F9FF] transition-colors"
               disabled={isSubmitting}
             />
           </div>
@@ -168,7 +168,7 @@ export function WriteReviewModal({
               placeholder="Share your experience with this API..."
               rows={6}
               maxLength={1000}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#14F195] transition-colors resize-none"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00F9FF] transition-colors resize-none"
               disabled={isSubmitting}
             />
             <div className="text-xs text-gray-500 mt-1 text-right">
